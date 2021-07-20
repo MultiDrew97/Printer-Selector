@@ -1,12 +1,7 @@
 # Project exclude paths
-/bin/db.js
-/bin/db.js.map
-/bin/env.js
-/bin/env.js.map
-/bin/mailer.js
-/bin/mailer.js.map
-/bin/utils.js
-/bin/utils.js.map
+/bin/*.js
+/bin/*.js.map
 /node_modules/
-/app.js
-/app.js.map
+/*.js
+/*.js.map
+/bin/env.*
