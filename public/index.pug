@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  div(class='main')
+    h1 {{ header }}
+    p {{ subheader }}
+    p This is where you'll be able to add any printers that you may need to your computer
+    div(class='main-container')
+      div(class='dynamic')
+        ng-view

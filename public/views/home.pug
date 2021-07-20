@@ -1,0 +1,9 @@
+// extends ../layout
+head
+    link(rel='stylesheet', href='../styles/home.css')
+body(ng-include='HomeCtrl', onload='parseData')
+    div(ng-repeat='data in parsedData')
+        ul {{ data.locationName }}
+            div(ng-repeat='printer in data.printers')
+                md-checkbox
+                    li {{ printer.displayName }}
