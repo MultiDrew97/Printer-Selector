@@ -1,0 +1,35 @@
+<div id="top">
+	<h1>{{ header }}</h1>
+	<h3>{{ subheader }}</h3>
+</div>
+<nav id="table-contents">
+	<p>Tutorials</p>
+	<ul>
+		<li *ngFor="let tutorial of tutorials"><a href="/faq#{{tutorial.linkID}}">{{ tutorial.text }}</a></li>
+	</ul>
+
+	<p>FAQs</p>
+	<ul>
+		<li *ngFor="let faq of faqs"><a href="/faq#{{faq.linkID}}">{{ faq.question }}</a></li>
+	</ul>
+</nav>
+<div id="tutorials">
+	<div [id]="tutorial.linkID" *ngFor="let tutorial of tutorials">
+		<h3>{{ tutorial.description }}</h3>
+		<ol>
+			<li *ngFor="let step of tutorial.steps" [innerHTML]="step"></li>
+		</ol>
+		<img [id]="tutorial.imgs[0]" src="assets/imgs/{{tutorial.imgs[0]}}.PNG" [alt]="alts[tutorial.imgs[0]]"/>
+	</div>
+</div>
+
+<div id="faqs">
+	<div *ngFor="let faq of faqs" [id]="faq.linkID">
+		<blockquote>
+			<header>
+				<h3 class="question">{{faq.question }}</h3>
+				<p class="answer">{{ faq.answer }}</p>
+			</header>
+		</blockquote>
+	</div>
+</div>

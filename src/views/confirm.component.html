@@ -1,0 +1,7 @@
+<mat-dialog-content>
+	<p class="message">{{ message }}</p>
+	<mat-dialog-actions>
+		<button mat-button (click)="close(false)">{{ decline }}</button>
+		<button mat-button (click)="close(true)">{{ accept }}</button>
+	</mat-dialog-actions>
+</mat-dialog-content>

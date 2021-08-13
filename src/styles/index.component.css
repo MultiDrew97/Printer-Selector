@@ -1,0 +1,12 @@
+.main {
+	display: grid;
+	text-align: center;
+}
+
+.header, .admin-link {
+	background-color: lightblue;
+}
+
+.admin-link {
+	text-align: right;
+}

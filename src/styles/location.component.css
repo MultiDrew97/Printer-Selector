@@ -1,0 +1,24 @@
+#printers {
+	max-width: 100%;
+	width: auto;
+}
+
+.printer {
+	float: left;
+	width: 33.3%;
+	border-bottom: 1px black solid;
+	box-sizing: border-box;
+}
+
+.input-pair {
+	display: inline-grid;
+	margin: 5%;
+}
+
+#dialog {
+	white-space: normal;
+}
+
+label {
+	font-weight: bold;
+}

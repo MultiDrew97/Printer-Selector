@@ -1,0 +1,44 @@
+<div id="admin-panel">
+	<h1 id="title">{{ title }}</h1>
+	<div id="tab-buttons">
+		<button id="tab-0" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.printer">Printers</button>
+		<button id="tab-1" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.location">Locations</button>
+	</div>
+
+	<div id="unauth" *ngIf="!authorized">
+		<h2>{{ prompts.unauthHeader }}</h2>
+		<p>{{ prompts.unauthSubHeader }}</p>
+		<button mat-button (click)="showLogin()">Login</button>
+	</div>
+
+	<table id="printers" class="display" *ngIf="currentTab === tabs.printer && authorized">
+		<thead class="printer-header">
+			<tr>
+				<td class="column-head display-name">Display Name</td>
+				<td class="column-head server-path">Print Server Path</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="data-row" *ngFor="let printer of printers" (click)="editPrinter(printer)">
+				<td class="display-name data">{{ printer.displayName }}</td>
+				<td class="path-name data">{{ printer.pathName }}</td>
+			</tr>
+		</tbody>
+	</table>
+	<table id="locations" class="display" *ngIf="currentTab === tabs.location && authorized">
+		<thead class="location-header">
+			<tr>
+				<td class="column-head display-name">Location Name</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="data-row" (click)="editLocation(location)" *ngFor="let location of locations">
+				<td class="location-name data">{{ location.displayName }}</td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="add-buttons" *ngIf="authorized">
+		<button mat-raised-button class="add-button" (click)="addPrinter()" *ngIf="currentTab === 0">Add Printer</button>
+		<button mat-raised-button class="add-button" (click)="addLocation()" *ngIf="currentTab === 1">Add Location</button>
+	</div>
+</div>

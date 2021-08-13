@@ -1,0 +1,81 @@
+.tab-button {
+	cursor: pointer;
+	background-color: #777;
+	padding: 2%;
+	color: white;
+}
+
+.active, .tab:hover {
+	background-color: #555;
+}
+
+#tab-buttons {
+	width: 100%;
+	border-bottom: 3px black solid;
+	margin-bottom: 5%;
+}
+
+#admin-panel {
+	margin: 5%;
+}
+
+#add-buttons {
+	margin: 5%;
+	float: right;
+}
+
+#title {
+	text-align: center
+}
+
+/*.column-head:after {
+	float: right;
+	content: '\25BD'
+}*/
+
+.display {
+	width: auto;
+	border-collapse: collapse;
+	border-spacing: unset;
+	text-align: center;
+	border-bottom: 2px black solid;
+	margin: 0 25%;
+	min-width: 50%;
+	max-width: 100%;
+}
+
+.data {
+	font-size: 1.4rem;
+	border-left: 2px black solid;
+	border-right: 2px black solid;
+}
+
+.column-head {
+	text-align: left;
+	font-size: 1.2rem;
+	padding: 1% 2%;
+	background: black;
+	color: white;
+	border: 2px #555 solid;
+	font-weight: bold;
+}
+
+.display tbody tr:nth-child(even) {
+	background: lightgrey;
+}
+
+.display tbody tr:nth-child(odd) {
+	background: dimgrey;
+}
+
+.display tbody tr {
+	cursor: pointer;
+}
+
+.display tbody tr:hover {
+	color: #999;
+}
+
+#unauth {
+	text-align: center;
+}

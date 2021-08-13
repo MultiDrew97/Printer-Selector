@@ -1,0 +1,23 @@
+<div class='container'>
+	<h1 class="add-header">Add Printers</h1>
+	<div class='collapsible-container'>
+		<div class='location-set' *ngFor='let location of locations'>
+			<div class='selection-buttons'>
+				<button class='location-select-all' (click)='selectAll(location)'>Select All</button>
+				<button class='location-deselect-all' (click)='deselectAll(location)'>Unselect All</button>
+			</div>
+
+			<button class='location collapsible'
+					(click)='changeCollapsible($event.target)'>{{ location.displayName }}</button>
+			<div class='collapsible-content'>
+				<mat-checkbox class='printer' [(ngModel)]="printer.checked"
+							  *ngFor='let printer of location.printers'>{{ printer.displayName }}</mat-checkbox>
+			</div>
+		</div>
+	</div>
+
+	<div class='nav-buttons'>
+		<button (click)="clearSelection()">Clear Selections</button>
+		<button (click)="sendSelected()">Get Printers</button>
+	</div>
+</div>

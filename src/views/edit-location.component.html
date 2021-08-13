@@ -1,0 +1,28 @@
+<div id="container">
+	<mat-dialog-content>
+		<h1>Edit Location</h1>
+		<h3>{{ location.displayName }}</h3>
+		<form id="edit-location" (submit)="finished()" (change)="validate()">
+			<div class="input-pair">
+				<label for="locationID">{{ prompts.locationID }}</label>
+				<input name="locationID" id="locationID" type="text" readonly [ngModel]="location._id" />
+			</div>
+
+			<div class="input-pair">
+				<label for="locationName">{{ prompts.locationName }}</label>
+				<input name="locationName" id="locationName" type="text" [(ngModel)]="locationName" (ngModelChange)="validate()"/>
+			</div>
+
+			<div class="input-pair">
+				<label for="locationPrinters">{{ prompts.locationPrinters }}</label>
+				<select name="locationPrinters" multiple id="locationPrinters" (change)="validate()">
+					<option *ngFor="let printer of printers" [id]="printer._id" class="printer" [value]="printer._id">{{ printer.displayName }}</option>
+				</select>
+			</div>
+		</form>
+	</mat-dialog-content>
+	<mat-dialog-actions id="action-buttons">
+		<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
+		<button mat-button class="action-button" form="edit-location" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
+	</mat-dialog-actions>
+</div>

@@ -3,7 +3,22 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  db: {
+    user: 'sysadmin',
+    pass: 'SoliDeoGLoria10',
+    uri: 'mongodb+srv://{0}:{1}@printer-site.qm713.mongodb.net/Printer-Site-Test?retryWrites=true&w=majority'
+  },
+  auth: {
+    user: 'sysadmin',
+    pass: 'SoliDeoGloria10'
+  },
+  emailing: {
+    user: 'andrew.warren@austingastro.com',
+    pass: 'JasmineLove2697',
+    from: "AGIT",
+    subject: "Printer Installations"
+  }
 };
 
 /*

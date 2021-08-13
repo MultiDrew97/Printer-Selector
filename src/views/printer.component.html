@@ -1,0 +1,24 @@
+<div id="dialog">
+	<mat-dialog-content id="dialog-content">
+		<form id="new-printer" (cancel)="close()" (ngSubmit)="finished()" (change)="validate()">
+			<div class="form-field">
+				<label for="printerName">{{ prompts.displayName }}</label>
+				<input (ngModelChange)="validate()" name="displayName" id="printerName" type="text" [(ngModel)]="newPrinter.displayName" required />
+			</div>
+			<div class="form-field">
+				<label for="printerPath">{{ prompts.pathName }}</label>
+				<input (ngModelChange)="validate()" name="pathName" id="printerPath" type="text" [(ngModel)]="newPrinter.pathName" required />
+			</div>
+			<div class="form-field">
+				<label for="locations">{{ prompts.locationName }}</label>
+				<select id="locations" name="location" [(ngModel)]="newPrinter.locationID" (ngModelChange)="validate()">
+					<option *ngFor="let location of locations" [value]="location._id">{{ location.displayName }}</option>
+				</select>
+			</div>
+		</form>
+	</mat-dialog-content>
+	<mat-dialog-actions id="action-buttons">
+		<button mat-button class="action-button" (click)="close()">{{ buttons.cancel }}</button>
+		<button mat-button class="action-button" type="submit" form="new-printer" [disabled]="!valid">{{ buttons.confirm }}</button>
+	</mat-dialog-actions>
+</div>

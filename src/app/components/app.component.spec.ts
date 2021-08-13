@@ -19,7 +19,7 @@ describe('AppComponent', () => {
   it(`should have as title 'Printer-Site-Redux'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('Printer-Site-Redux');
+    expect(app.department).toEqual('AGIT');
   });
 
   it('should render title', () => {

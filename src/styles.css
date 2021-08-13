@@ -1,1 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
+#route-links {
+	display: flex;
+	justify-content: space-between;
+	background-color: cadetblue;
+}
+
+.route-link {
+	margin: 1%;
+	float: right;
+	width: 30%;
+	box-sizing: border-box;
+}
+
+.main {
+	margin-top: 10%;
+	text-align: center;
+}
+
+.dynamic {
+	display: flow;
+}
+
+html {
+	background-color: lightblue;
+	font: 12pt "sans-serif";
+	/*white-space: nowrap;*/
+}
+
+#action-buttons {
+	display: flex;
+	box-sizing: border-box;
+	justify-items: stretch;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	align-items: center;
+	margin: 0 5%;
+}
+
+.input-pair, form {
+	display: inline-grid;
+}
+
+.input-pair {
+	margin: 2%;
+}
