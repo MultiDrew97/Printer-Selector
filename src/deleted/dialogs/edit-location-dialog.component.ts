@@ -1,3 +1,4 @@
+/*
 import {Component, Inject, OnInit} from "@angular/core";
 import {Location, Printer} from "../../scripts/models";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -44,7 +45,7 @@ export class EditLocationDialogComponent implements OnInit {
 				}
 			}
 		}
-		/*
+		/!*
 		let printers = this.location.getPrinters()
 
 		printers.forEach((printerID: string) => {
@@ -53,7 +54,7 @@ export class EditLocationDialogComponent implements OnInit {
 
 				}
 			}
-		})*/
+		})*!/
 	}
 
 	close() {
@@ -82,3 +83,4 @@ export class EditLocationDialogComponent implements OnInit {
 		return this.locationName.length > 0 && !/^\s+$/i.test(this.locationName)
 	}
 }
+*/

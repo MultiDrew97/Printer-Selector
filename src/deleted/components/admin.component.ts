@@ -1,7 +1,8 @@
+/*
 import {Component, OnInit} from "@angular/core";
 import {APIService} from "../services/api.service";
 import {ActivatedRoute} from "@angular/router";
-import {Printer, Location} from "../../scripts/models";
+import {Location, Printer} from "../../scripts/models";
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {PrinterDialogComponent} from "./printer-dialog.component";
 import {LocationDialogComponent} from "./location-dialog.component";
@@ -10,6 +11,8 @@ import {EditPrinterDialogComponent} from "./edit-printer-dialog.component";
 import {EditLocationDialogComponent} from "./edit-location-dialog.component";
 import {CookiesService} from "../services/cookies.service";
 import {LoginDialogComponent} from "./login-dialog.component";
+import {Sorter} from '../../scripts/utils'
+import {SortColumn, SortOrder} from "../../scripts/enums";
 
 @Component({
 	templateUrl: '../../views/admin.component.html',
@@ -21,6 +24,9 @@ export class AdminComponent implements OnInit {
 	printers: Printer[] = [] as Printer[]
 	locations: Location[] = [] as Location[]
 	authorized: boolean = false;
+	printerSort: SortOrder = SortOrder.NORMAL
+	locationSort: SortOrder = SortOrder.NORMAL
+	currentPrinterColumn: SortColumn = SortColumn.DISPLAY
 
 	tabs = {
 		printer: 0,
@@ -39,14 +45,13 @@ export class AdminComponent implements OnInit {
 				private readonly dialog: MatDialog,
 				readonly cookies: CookiesService) {
 		this.config = new MatDialogConfig();
+		this.config.disableClose = true;
+		this.config.width = 'auto';
+		this.config.height = 'auto';
 	}
 
 	ngOnInit(): void {
 		this.toggleActive(document.getElementById(`tab-${this.currentTab}`)!);
-
-		this.config.disableClose = true;
-		this.config.width = 'auto';
-		this.config.height = 'auto';
 
 		for (const printer of this.route.snapshot.data.printers) {
 			this.printers.push(printer)
@@ -72,10 +77,10 @@ export class AdminComponent implements OnInit {
 		let tabIndex: number = toNumbers(tab.value)[0]
 
 		return tabIndex === this.currentTab && !tab.classList.contains('active') //) {
-			/*this.toggleActive(tab)
-		}*/
+			/!*this.toggleActive(tab)
+		}*!/
 
-		/*this.changeTab(tabIndex)*/
+		/!*this.changeTab(tabIndex)*!/
 	}
 
 	toggleActive(button: HTMLElement) {
@@ -164,12 +169,12 @@ export class AdminComponent implements OnInit {
 				// TODO: Determine how to update a location's printer list
 				//let newLocation: Location;
 
-				/*for (const location of this.locations) {
+				/!*for (const location of this.locations) {
 					if (location._id === updated.locationID) {
 						newLocation = location;
 						break;
 					}
-				}*/
+				}*!/
 
 				// Update the printer list for the location and send to API
 				// newLocation!.printers.push(updated.printer)
@@ -195,12 +200,11 @@ export class AdminComponent implements OnInit {
 
 		this.openDialog('el').afterClosed().subscribe((updated: Location) => {
 			// Send updated info to api/database
-			// TODO: Run tests to make sure this works with/without sending on printer IDs
-			// TODO: Make sure this sends the IDs of the printers and not the Printer objects as the API expects strings
-			/*let updatedLocation = {
+			// TODO: Run tests to make sure this works with/without sending printer IDs
+			/!*let updatedLocation = {
 				displayName: updated.displayName || location.displayName,
 				printers: this.getPrinterIDs(updated.printers)
-			}*/
+			}*!/
 			if (updated) {
 				this.api.updateLocation(updated).subscribe(_ => {
 					alert('Location updated successfully')
@@ -224,21 +228,78 @@ export class AdminComponent implements OnInit {
 	}
 
 	private sortArrays() {
-		this.locations = this.locations.sort((a: Location, b: Location): number => {
-			let value1 = a.displayName.charCodeAt(0)
-			let value2 = b.displayName.charCodeAt(0)
+		this.sortAllLocations(SortColumn.DISPLAY)
 
-			return value1 - value2;
-		})
-
-		this.printers = this.printers.sort((a: Printer, b: Printer): number => {
-			let value1 = a.displayName.charCodeAt(0)
-			let value2 = b.displayName.charCodeAt(0)
-
-			return value1 - value2
-		})
+		this.sortAllPrinters(SortColumn.DISPLAY)
 	}
 
+	/!**
+	 * Sort all the printers and store them in the printers variable
+	 * @param column The column to sort on
+	 *!/
+	sortAllPrinters(column: SortColumn) {
+		/!*
+			TODO: Figure out how to determine what the current column is
+				and adjust the sort order based on it
+		 *!/
+		if (column !== this.currentPrinterColumn) {
+			// Sorting based on different column so set to normal sort order
+			console.debug('Changing Columns')
+			this.printerSort = SortOrder.NORMAL
+			this.currentPrinterColumn = column
+		} else {
+			// Same column to sort on so flip sort order
+			console.debug('Same Column')
+			this.printerSort = this.printerSort === SortOrder.NORMAL ? SortOrder.REVERSED : SortOrder.NORMAL
+		}
+
+		console.debug(this.currentPrinterColumn)
+		this.printers = Sorter.sort(this.printers, column, this.printerSort) as Printer[]
+		/!*switch(column) {
+			case SortColumn.DISPLAY:
+				this.printers = Sorter.sortByDisplayName(this.printers, order) as Printer[];
+				break;
+			case SortColumn.PATH:
+				this.printers = Sorter.sortByPathName(this.printers, order);
+				break;
+		}*!/
+	}
+
+	/!**
+	 * Sort the given printers array based on the given column in the given sort order and return that sorted array
+	 * @param printers The printers array to sort
+	 * @param column The column to sort the array on
+	 * @param order The order in which to sort the array
+	 * @return The sorted printer array
+	 *!/
+	sortPrinters(printers: Printer[], column: SortColumn, order: SortOrder): Printer[] {
+		return Sorter.sort(printers, column, order) as Printer[];
+		/!*switch (column) {
+			case SortColumn.DISPLAY:
+				return Sorter.sort(printers, order);
+			case SortColumn.PATH:
+				return Sorter.sortByPathName(printers, order);
+		}*!/
+	}
+
+	/!**
+	 * Sort all the locations based on the given column and stores it in global locations variable
+	 * @param column The column to sort on
+	 *!/
+	sortAllLocations(column?: SortColumn) {
+		// TODO: Make this store per column not globally
+		this.locationSort = this.locationSort === SortOrder.NORMAL ? SortOrder.REVERSED : SortOrder.NORMAL
+		this.locations = Sorter.sort(this.locations, column ? column : SortColumn.DISPLAY, this.locationSort) as Location[]
+		/!*switch(column) {
+			case SortColumn.DISPLAY:
+				this.locations = Sorter.sortByDisplayName(this.locations, this.locationSort) as Location[]
+				break;
+		}*!/
+	}
+
+	/!**
+	 * Show the login prompt
+	 *!/
 	showLogin() {
 		this.openDialog('a').afterClosed().subscribe((loggedIn: boolean) => {
 			this.authorized = loggedIn
@@ -246,6 +307,9 @@ export class AdminComponent implements OnInit {
 		})
 	}
 
+	/!**
+	 * Check to see if the user is authorized to use the admin portal
+	 *!/
 	checkAuth() {
 		let authorized = this.cookies.get('authorized')
 
@@ -255,4 +319,14 @@ export class AdminComponent implements OnInit {
 			this.authorized = true;
 		}
 	}
+
+	getSortColumn(column?: string): SortColumn {
+		switch (column) {
+			case 'path':
+				return SortColumn.PATH
+			default:
+				return SortColumn.DISPLAY
+		}
+	}
 }
+*/

@@ -1,3 +1,4 @@
+/*
 import {Component, Inject, OnInit} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Printer, Location} from "../../scripts/models";
@@ -84,3 +85,4 @@ export class PrinterDialogComponent implements OnInit {
 		return this.newPrinter.locationID.length > 0
 	}
 }
+*/

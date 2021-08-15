@@ -1,3 +1,4 @@
+/*
 import {Component, Inject, OnInit} from "@angular/core";
 import {Printer, Location} from "../../scripts/models";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
@@ -54,7 +55,7 @@ export class EditPrinterDialogComponent implements OnInit {
 			}
 
 			this.dialogRef.close(updated)
-			/*this.printer.displayName = this.printerName
+			/!*this.printer.displayName = this.printerName
 			this.printer.pathName = this.pathName
 			if(this.locationID !== this.oldLocation) {
 				let updated = {
@@ -64,7 +65,7 @@ export class EditPrinterDialogComponent implements OnInit {
 				this.dialogRef.close(updated)
 			} else {
 				this.dialogRef.close(this.printer)
-			}*/
+			}*!/
 		}
 	}
 
@@ -106,3 +107,4 @@ export class EditPrinterDialogComponent implements OnInit {
 		// return ''
 	}
 }
+*/

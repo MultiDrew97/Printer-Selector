@@ -11,11 +11,13 @@
 		<button mat-button (click)="showLogin()">Login</button>
 	</div>
 
+	<!-- TODO: Add Filtering to the printers table -->
+	<!-- TODO: Add Searching for the tables -->
 	<table id="printers" class="display" *ngIf="currentTab === tabs.printer && authorized">
 		<thead class="printer-header">
 			<tr>
-				<td class="column-head display-name">Display Name</td>
-				<td class="column-head server-path">Print Server Path</td>
+				<td class="column-head display-name" (click)="sortAllPrinters(getSortColumn('display'))">Display Name</td>
+				<td class="column-head server-path" (click)="sortAllPrinters(getSortColumn('path'))">Path Name</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -28,7 +30,7 @@
 	<table id="locations" class="display" *ngIf="currentTab === tabs.location && authorized">
 		<thead class="location-header">
 			<tr>
-				<td class="column-head display-name">Location Name</td>
+				<td class="column-head display-name" (click)="sortAllLocations(getSortColumn())">Location Name</td>
 			</tr>
 		</thead>
 		<tbody>

@@ -1,3 +1,4 @@
+/*
 import {Component, Inject} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
 
@@ -52,3 +53,4 @@ export class LoginDialogComponent {
 		return this.pass.length > 0 && !/^\s+$/i.test(this.pass)
 	}
 }
+*/

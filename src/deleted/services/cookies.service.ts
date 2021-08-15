@@ -1,3 +1,4 @@
+/*
 import {Inject, Injectable} from "@angular/core";
 
 @Injectable({
@@ -55,3 +56,4 @@ export class CookiesService {
 		document.cookie = `${key}=;expires=${date.toUTCString()};path=/`;
 	}
 }
+*/

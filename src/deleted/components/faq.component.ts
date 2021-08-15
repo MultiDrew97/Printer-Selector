@@ -1,3 +1,4 @@
+/*
 import {Component} from "@angular/core";
 import {FAQ} from "../../scripts/models";
 
@@ -37,3 +38,4 @@ export class FAQComponent {
 	]
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 import {Component, Inject} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
@@ -12,7 +13,6 @@ export class EmailDialogComponent {
 
 	constructor(private dialogRef: MatDialogRef<EmailDialogComponent>,
 				@Inject(MAT_DIALOG_DATA) data: any) {
-
 	}
 
 	verifyEmail() {
@@ -27,3 +27,4 @@ export class EmailDialogComponent {
 		this.dialogRef.close();
 	}
 }
+*/

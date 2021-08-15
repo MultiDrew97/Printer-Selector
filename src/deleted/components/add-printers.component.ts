@@ -1,3 +1,4 @@
+/*
 import {Component, OnInit} from '@angular/core';
 import {Printer, Location} from '../../scripts/models';
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
@@ -11,7 +12,7 @@ import {AlertDialogComponent} from "./alert-dialog.component";
 	templateUrl: '../../views/home.component.html',
 	styleUrls: ['../../styles/home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class AddPrintersComponent implements OnInit {
 	printers: Printer[] = [];
 	locations: Location[] = [];
 	selectedPrinters: Printer[] = [];
@@ -101,7 +102,7 @@ export class HomeComponent implements OnInit {
 				}
 			});
 
-			/*this.showDialog({
+			/!*this.showDialog({
 				templateUrl: '../../views/email.html',
 				controller: 'EmailController'
 			}).then(email => {
@@ -143,7 +144,7 @@ export class HomeComponent implements OnInit {
 				}, () => {
 					// Do nothing as they said don't clear selection
 				})
-			})*/
+			})*!/
 		}
 	}
 
@@ -176,14 +177,14 @@ export class HomeComponent implements OnInit {
 		}
 	}
 
-	/*parseData() {
+	/!*parseData() {
 		for (const location of this.locations) {
 			this.parsedData.push(Data.parse(location, this.printers))
 		}
 		this.locations.forEach( (location: Location) => {
 			this.parsedData.push(Data.parse(location, this.printers))
 		})
-	}*/
+	}*!/
 
 	getEmail() {
 		return this.openDialog('e')
@@ -220,3 +221,4 @@ export class HomeComponent implements OnInit {
 		}
 	}
 }
+*/
