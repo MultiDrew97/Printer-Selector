@@ -8,7 +8,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatButtonModule} from "@angular/material/button";
 import {AppRoutingModule} from "./app-routing.module";
-import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent} from "./components";
+import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent, AppComponent} from "./components";
 import {LocationResolver, PrinterResolver} from "./resolvers";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatOptionModule} from "@angular/material/core";
@@ -41,7 +41,8 @@ import {
 		EditPrinterDialogComponent,
 		EditLocationDialogComponent,
 		LoginDialogComponent,
-		FAQComponent
+		FAQComponent,
+		AppComponent
 	],
 	imports: [
 		BrowserModule,
@@ -77,7 +78,7 @@ import {
 		}
 	],
 	bootstrap: [
-
+		AppComponent
 	]
 })
 export class AppModule {

@@ -17,7 +17,7 @@
 	<!-- TODO: Add Searching for the tables -->
 	<div id="printers-filter-bar">
 		<!-- TODO: Adjust the filtering design -->
-		<label for="printers-filter-bar">Filter</label>
+		<!--<label for="printers-filter-bar">Filter</label>-->
 		<select [(ngModel)]="filterColumn" (ngModelChange)="filterText = ''" *ngIf="currentTab === tabs.PRINTER">
 			<option [value]="columns.DISPLAY">Display Name</option>
 			<option [value]="columns.PATH">Path Name</option>

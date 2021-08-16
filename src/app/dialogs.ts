@@ -135,6 +135,8 @@ export class LoginDialogComponent {
 	login() {
 		if (this.user === this.creds.user && this.pass === this.creds.pass) {
 			this.finished()
+		} else {
+			this.pass = ''
 		}
 	}
 

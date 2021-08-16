@@ -18,6 +18,8 @@ export interface Printer extends Data {
 // TODO: Determine a more descriptive name for this base interface for FAQs and Tutorials
 interface _ extends dbEntry {
 	linkID: string;
+	// This should be in the order that they will appear in the tutorial/faq
+	// TODO: Ensure that these are coming in the order expected from the database
 	imgs: string[];
 }
 

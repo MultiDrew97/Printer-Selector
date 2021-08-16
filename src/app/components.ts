@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {Location, Printer} from "../scripts/models";
+import {FAQ, Location, Printer, Tutorial} from "../scripts/models";
 import {DialogSelection, SortColumn, SortOrder, Tabs} from "../scripts/enums";
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {ActivatedRoute} from "@angular/router";
@@ -37,7 +37,6 @@ export class AdminComponent implements OnInit {
 
 	tabs = Tabs
 	columns = SortColumn
-
 
 
 	prompts = {
@@ -100,6 +99,10 @@ export class AdminComponent implements OnInit {
 		/*this.changeTab(tabIndex)*/
 	}
 
+	/**
+	 * Sets the specified button as active
+	 * @param button The button to set active
+	 */
 	toggleActive(button: HTMLElement) {
 		button.classList.toggle('active')
 	}
@@ -156,7 +159,7 @@ export class AdminComponent implements OnInit {
 			this.toggleActive(tab)
 		}
 
-		switch(this.currentTab) {
+		switch (this.currentTab) {
 			case Tabs.PRINTER:
 				break;
 			case Tabs.LOCATION:
@@ -165,6 +168,10 @@ export class AdminComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Opens the dialog specified from the dialog selection enum
+ 	 * @param dialogSelection The dialog box to open
+	 */
 	openDialog(dialogSelection: DialogSelection): MatDialogRef<any> {
 		let ref: MatDialogRef<any>;
 
@@ -194,6 +201,10 @@ export class AdminComponent implements OnInit {
 		return ref
 	}
 
+	/**
+	 * Opens a dialog to edit the specified printer
+	 * @param printer The printer to be edited
+	 */
 	editPrinter(printer: Printer): void {
 		this.config.data = {
 			printer: printer,
@@ -213,6 +224,10 @@ export class AdminComponent implements OnInit {
 		})
 	}
 
+	/**
+	 * Opens a dialog box for editing the specified location
+	 * @param location The location to be edited
+	 */
 	editLocation(location: Location): void {
 		this.config.data = {
 			location: location,
@@ -242,12 +257,6 @@ export class AdminComponent implements OnInit {
 
 		return IDs
 	}*/
-
-	private sortArrays() {
-		this.mutableLocations = sort(this.locations, SortColumn.DISPLAY, this.locationSort) as Location[]
-
-		this.mutablePrinters = sort(this.printers, SortColumn.DISPLAY, this.printerSort) as Printer[]
-	}
 
 	/**
 	 * Sort all the printers and store them in the printers variable
@@ -343,6 +352,12 @@ export class AdminComponent implements OnInit {
 				})
 		}
 	}
+
+	private sortArrays() {
+		this.mutableLocations = sort(this.locations, SortColumn.DISPLAY, this.locationSort) as Location[]
+
+		this.mutablePrinters = sort(this.printers, SortColumn.DISPLAY, this.printerSort) as Printer[]
+	}
 }
 
 @Component({
@@ -354,7 +369,8 @@ export class AddPrintersComponent implements OnInit {
 	locations: Location[] = [];
 	selectedPrinters: Printer[] = [];
 
-	constructor(private dialog: MatDialog, readonly api: APIService, private route: ActivatedRoute) { }
+	constructor(private dialog: MatDialog, readonly api: APIService, private route: ActivatedRoute) {
+	}
 
 	ngOnInit(): void {
 		for (const printer of this.route.snapshot.data.printers) {
@@ -502,7 +518,7 @@ export class AddPrintersComponent implements OnInit {
 		config.autoFocus = true;
 		config.data = data;
 
-		switch(param) {
+		switch (param) {
 			case 'e':
 				return this.dialog.open(EmailDialogComponent, config)
 			case 'c':
@@ -539,7 +555,7 @@ export class AddPrintersComponent implements OnInit {
 		})
 	}
 
-	parseConfirms(): {confirmedPrinters: string, printerPaths: string[]} {
+	parseConfirms(): { confirmedPrinters: string, printerPaths: string[] } {
 		let confirmedPrinters: string = ''
 		let printerPaths: string[] = [] as string[];
 
@@ -566,13 +582,14 @@ export class AddPrintersComponent implements OnInit {
 export class FAQComponent {
 	header: string = "AGIT's Printer FAQ";
 	subheader: string = "If you have any issues getting your printer(s) installed, refer to below";
-	alts: {[key: string]: string} = {'run': 'The run box opened when pressing win + r'};
+	alts: { [key: string]: string } = {'run': 'The run box opened when pressing win + r'};
 
-	// TODO: Make this a part of the database?
-	tutorials = [
+	// TODO: Make this a part of the database somehow?
+	tutorials: Tutorial[] = [
 		{
+			_id: '',
 			linkID: 'web',
-			text: 'Web Access',
+			title: 'Web Access',
 			description: "If you are accessing this from Outlook Web Access (OWA), then you won't be able to click the link like normal",
 			steps: [
 				'Press <code>Win + R</code><pre>This will open a Run box (shown below)</pre>',
@@ -586,11 +603,13 @@ export class FAQComponent {
 		}
 	]
 
-	faqs = [
+	faqs: FAQ[] = [
 		{
+			_id: '',
 			linkID: 'nothing-happened',
 			question: 'I clicked the link, and nothing happened',
-			answer: "It's possible that the printer is already installed. To be sure, follow <a href='/faq/#web'>this</a> tutorial. If you still can't get it to install, email us at <a href='mailto:agit@austingastro.com?subject=Unable to Add Printer'>AGIT@AustinGastro.com</a>"
+			answer: "It's possible that the printer is already installed. To be sure, follow <a href='/faq/#web'>this</a> tutorial. If you still can't get it to install, email us at <a href='mailto:agit@austingastro.com?subject=Unable to Add Printer'>AGIT@AustinGastro.com</a>",
+			imgs: []
 		}
 	]
 
@@ -604,4 +623,12 @@ export class HomeComponent {
 	department: string = 'AGIT';
 	header: string = 'Printer Installation';
 	subheader: string = `Welcome to the ${this.department} ${this.header} Site.`;
+}
+
+@Component({
+	selector: 'app-root',
+	templateUrl: '../views/app.component.html',
+	styleUrls: ['../styles/app.component.css']
+})
+export class AppComponent {
 }

@@ -87,6 +87,8 @@
 
 #printers-filter-bar {
 	display: grid;
+	justify-content: end;
+	justify-items: start;
 }
 
 
