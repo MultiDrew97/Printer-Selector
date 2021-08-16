@@ -1,10 +1,10 @@
 import {Component, Inject, OnInit} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Location, Printer} from "../../scripts/models";
+import {Location, Printer} from "../scripts/models";
 
 @Component({
-	templateUrl: '../../views/confirm.component.html',
-	styleUrls: ['../../styles/confirm.component.css']
+	templateUrl: '../views/confirm.component.html',
+	styleUrls: ['../styles/confirm.component.css']
 })
 export class ConfirmDialogComponent implements OnInit {
 	message: string = ''
@@ -24,8 +24,8 @@ export class ConfirmDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/alert.component.html',
-	styleUrls: ['../../styles/alert.component.css']
+	templateUrl: '../views/alert.component.html',
+	styleUrls: ['../styles/alert.component.css']
 })
 export class AlertDialogComponent implements OnInit {
 	message: string = ''
@@ -44,8 +44,8 @@ export class AlertDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/location.component.html',
-	styleUrls: ['../../styles/location.component.css']
+	templateUrl: '../views/location.component.html',
+	styleUrls: ['../styles/location.component.css']
 })
 export class LocationDialogComponent {
 	locationName: string = '';
@@ -111,8 +111,8 @@ export class LocationDialogComponent {
 }
 
 @Component({
-	templateUrl: '../../views/login.component.html',
-	styleUrls: ['../../styles/login.component.css']
+	templateUrl: '../views/login.component.html',
+	styleUrls: ['../styles/login.component.css']
 })
 export class LoginDialogComponent {
 	user: string = ''
@@ -163,8 +163,8 @@ export class LoginDialogComponent {
 }
 
 @Component({
-	templateUrl: '../../views/printer.component.html',
-	styleUrls: ['../../styles/printer.component.css']
+	templateUrl: '../views/printer.component.html',
+	styleUrls: ['../styles/printer.component.css']
 })
 export class PrinterDialogComponent implements OnInit {
 	newPrinter = {
@@ -246,7 +246,7 @@ export class PrinterDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/prompt.component.html'
+	templateUrl: '../views/prompt.component.html'
 })
 export class PromptDialogComponent implements OnInit {
 	reject: string = 'Cancel'
@@ -271,8 +271,8 @@ export class PromptDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/edit-location.component.html',
-	styleUrls: ['../../styles/edit-location.component.css']
+	templateUrl: '../views/edit-location.component.html',
+	styleUrls: ['../styles/edit-location.component.css']
 })
 export class EditLocationDialogComponent implements OnInit {
 	location: Location;
@@ -352,8 +352,8 @@ export class EditLocationDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/edit-printer.component.html',
-	styleUrls: ['../../styles/edit-printer.component.css']
+	templateUrl: '../views/edit-printer.component.html',
+	styleUrls: ['../styles/edit-printer.component.css']
 })
 export class EditPrinterDialogComponent implements OnInit {
 	printer: Printer;
@@ -457,8 +457,8 @@ export class EditPrinterDialogComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/email.component.html',
-	styleUrls: ['../../styles/email.component.css']
+	templateUrl: '../views/email.component.html',
+	styleUrls: ['../styles/email.component.css']
 })
 export class EmailDialogComponent {
 	email: string = '';

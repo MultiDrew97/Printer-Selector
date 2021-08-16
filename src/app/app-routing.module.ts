@@ -1,10 +1,11 @@
 import {NgModule} from "@angular/core";
 import {Routes, RouterModule} from '@angular/router'
-import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent} from "./components/components";
-import {PrinterResolver} from "./resolvers/printer.resolver";
-import {LocationResolver} from "./resolvers/location.resolver";
+import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent} from "./components";
+import {PrinterResolver, LocationResolver} from "./resolvers";
 
-// Routes for the application
+/**
+ * Routes for the application
+  */
 const routes: Routes = [
 	{
 		path: '',

@@ -2,6 +2,7 @@
 	<h1>{{ header }}</h1>
 	<h3>{{ subheader }}</h3>
 </div>
+
 <nav id="table-contents">
 	<p>Tutorials</p>
 	<ul>
@@ -13,6 +14,7 @@
 		<li *ngFor="let faq of faqs"><a href="/faq#{{faq.linkID}}">{{ faq.question }}</a></li>
 	</ul>
 </nav>
+
 <div id="tutorials">
 	<div [id]="tutorial.linkID" *ngFor="let tutorial of tutorials">
 		<h3>{{ tutorial.description }}</h3>

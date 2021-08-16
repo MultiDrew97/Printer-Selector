@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Location, Printer} from "../../scripts/models";
+import {Location, Printer} from "../scripts/models";
 import {Buffer} from "buffer";
 
 @Injectable({

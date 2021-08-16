@@ -1,40 +1,48 @@
 import {Component, OnInit} from "@angular/core";
-import {Location, Printer} from "../../scripts/models";
-import {SortColumn, SortOrder} from "../../scripts/enums";
+import {Location, Printer} from "../scripts/models";
+import {DialogSelection, SortColumn, SortOrder, Tabs} from "../scripts/enums";
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {ActivatedRoute} from "@angular/router";
 import {toNumbers} from "@angular/compiler-cli/src/diagnostics/typescript_version";
-import {Sorter} from "../../scripts/utils";
+import {sort} from "../scripts/utils";
 import {
+	AlertDialogComponent,
+	ConfirmDialogComponent,
 	EditLocationDialogComponent,
 	EditPrinterDialogComponent,
-	LocationDialogComponent, LoginDialogComponent,
-	PrinterDialogComponent, EmailDialogComponent, ConfirmDialogComponent, AlertDialogComponent
+	EmailDialogComponent,
+	LocationDialogComponent,
+	LoginDialogComponent,
+	PrinterDialogComponent
 } from "./dialogs";
-import {APIService, CookiesService} from "../services/services";
+import {APIService, CookiesService} from "./services";
 
 @Component({
-	templateUrl: '../../views/admin.component.html',
-	styleUrls: ['../../styles/admin.component.css']
+	templateUrl: '../views/admin.component.html',
+	styleUrls: ['../styles/admin.component.css']
 })
 export class AdminComponent implements OnInit {
 	title: string = 'Admin Portal'
-	currentTab: number = 0
-	printers: Printer[] = [] as Printer[]
-	locations: Location[] = [] as Location[]
+	currentTab: number = Tabs.PRINTER
+	readonly printers: Printer[] = [] as Printer[]
+	readonly locations: Location[] = [] as Location[]
+	mutablePrinters: Printer[] = [] as Printer[]
+	mutableLocations: Location[] = [] as Location[]
 	authorized: boolean = false;
 	printerSort: SortOrder = SortOrder.NORMAL
 	locationSort: SortOrder = SortOrder.NORMAL
 	currentPrinterColumn: SortColumn = SortColumn.DISPLAY
+	filterText: string = ''
+	filterColumn: SortColumn = SortColumn.DISPLAY
 
-	tabs = {
-		printer: 0,
-		location: 1
-	}
+	tabs = Tabs
+	columns = SortColumn
+
+
 
 	prompts = {
-		unauthHeader: 'Unauthorized',
-		unauthSubHeader: "You currently don't have permission to access this page"
+		unAuthHeader: 'Unauthorized',
+		unAuthSubHeader: "You currently don't have permission to access this page"
 	}
 
 	config: MatDialogConfig;
@@ -52,6 +60,9 @@ export class AdminComponent implements OnInit {
 	ngOnInit(): void {
 		this.toggleActive(document.getElementById(`tab-${this.currentTab}`)!);
 
+		/*this.printers = this.route.snapshot.data.printers
+		this.locations = this.route.snapshot.data.locations*/
+
 		for (const printer of this.route.snapshot.data.printers) {
 			this.printers.push(printer)
 		}
@@ -65,6 +76,9 @@ export class AdminComponent implements OnInit {
 		this.checkAuth();
 	}
 
+	/**
+	 * Clear all tab buttons so that none of them are set to active
+	 */
 	clearActive() {
 		let buttons = document.getElementsByClassName('tab-button')
 		for (let i = 0; i < buttons.length; i++) {
@@ -72,6 +86,10 @@ export class AdminComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Checks if the tab should be toggled
+	 * @param tab The tab to check
+	 */
 	performToggle(tab: HTMLButtonElement): boolean {
 		let tabIndex: number = toNumbers(tab.value)[0]
 
@@ -83,41 +101,52 @@ export class AdminComponent implements OnInit {
 	}
 
 	toggleActive(button: HTMLElement) {
-		// let button = target as HTMLElement
-
-		// If the tab is the current tab, set active and don't change unless switching to different tab
 		button.classList.toggle('active')
 	}
 
+	/**
+	 * Create a new printer
+	 */
 	addPrinter() {
 		this.config.data = {
 			printers: this.printers,
 			locations: this.locations
 		}
 
-		this.openDialog('p').afterClosed().subscribe((newPrinter: Printer) => {
+		this.openDialog(DialogSelection.NEW_PRINTER).afterClosed().subscribe((newPrinter: Printer) => {
 			console.debug(newPrinter)
 			// TODO: Implement adding new printers
 		})
 	}
 
+	/**
+	 * Create a new location
+	 */
 	addLocation() {
 		this.config.data = {
 			printers: this.printers,
 			locations: this.locations
 		}
 
-		this.openDialog('l').afterClosed().subscribe((newLocation: Location) => {
+		this.openDialog(DialogSelection.NEW_LOCATION).afterClosed().subscribe((newLocation: Location) => {
 			console.debug(newLocation)
 			// TODO: Implement adding new locations
 		})
 	}
 
+	/**
+	 * Change the tab for the admin portal and clear the filter text if different tab
+	 * @param index The tab that is being set as active
+	 */
 	changeTab(index: number) {
-		// Change the selection of the admin portal to manage printers or locations
+		this.filterText = index !== this.currentTab ? '' : this.filterText;
 		this.currentTab = index === this.currentTab ? this.currentTab : index;
 	}
 
+	/**
+	 * Handles changing the active tab
+	 * @param target The button that was clicked for this to trigger
+	 */
 	change(target: EventTarget) {
 		let tab = target as HTMLButtonElement;
 		this.clearActive()
@@ -126,30 +155,39 @@ export class AdminComponent implements OnInit {
 		if (this.performToggle(tab)) {
 			this.toggleActive(tab)
 		}
+
+		switch(this.currentTab) {
+			case Tabs.PRINTER:
+				break;
+			case Tabs.LOCATION:
+				this.filterColumn = SortColumn.DISPLAY
+				break;
+		}
 	}
 
-	openDialog(param: string): MatDialogRef<any> {
+	openDialog(dialogSelection: DialogSelection): MatDialogRef<any> {
 		let ref: MatDialogRef<any>;
 
-		switch (param) {
-			case 'l':
+		switch (dialogSelection) {
+			case DialogSelection.NEW_LOCATION:
 				// Add new location
 				ref = this.dialog.open(LocationDialogComponent, this.config);
 				break;
-			case 'p':
+			case DialogSelection.NEW_PRINTER:
 				// Add new printer
 				ref = this.dialog.open(PrinterDialogComponent, this.config);
 				break;
-			case 'ep':
+			case DialogSelection.EDIT_PRINTER:
 				// Edit a printer's information
 				ref = this.dialog.open(EditPrinterDialogComponent, this.config);
 				break;
-			case 'el':
+			case DialogSelection.EDIT_LOCATION:
 				// Edit a location's information
 				ref = this.dialog.open(EditLocationDialogComponent, this.config);
 				break;
-			case 'a':
+			case DialogSelection.LOGIN_PROMPT:
 				ref = this.dialog.open(LoginDialogComponent, this.config)
+				break;
 		}
 
 		// @ts-ignore
@@ -162,24 +200,8 @@ export class AdminComponent implements OnInit {
 			locations: this.locations
 		}
 
-		this.openDialog('ep').afterClosed().subscribe(updated => {
+		this.openDialog(DialogSelection.EDIT_PRINTER).afterClosed().subscribe(updated => {
 			if (updated) {
-				// Update printer and location information
-				// TODO: Determine how to update a location's printer list
-				//let newLocation: Location;
-
-				/*for (const location of this.locations) {
-					if (location._id === updated.locationID) {
-						newLocation = location;
-						break;
-					}
-				}*/
-
-				// Update the printer list for the location and send to API
-				// newLocation!.printers.push(updated.printer)
-
-				//this.api.updateLocation(newLocation!)
-
 				// Update Printer information
 				this.api.updatePrinter(updated.printer, updated.locationID).subscribe(_ => {
 					alert('Printer updated successfully')
@@ -197,13 +219,8 @@ export class AdminComponent implements OnInit {
 			printers: this.printers
 		}
 
-		this.openDialog('el').afterClosed().subscribe((updated: Location) => {
-			// Send updated info to api/database
+		this.openDialog(DialogSelection.EDIT_LOCATION).afterClosed().subscribe((updated: Location) => {
 			// TODO: Run tests to make sure this works with/without sending printer IDs
-			/*let updatedLocation = {
-				displayName: updated.displayName || location.displayName,
-				printers: this.getPrinterIDs(updated.printers)
-			}*/
 			if (updated) {
 				this.api.updateLocation(updated).subscribe(_ => {
 					alert('Location updated successfully')
@@ -215,7 +232,7 @@ export class AdminComponent implements OnInit {
 		})
 	}
 
-	getPrinterIDs(printers: Printer[]): string[] {
+	/*getPrinterIDs(printers: Printer[]): string[] {
 		const IDs = [] as string[]
 		for (const printer of printers) {
 			if (printer.checked) {
@@ -224,12 +241,12 @@ export class AdminComponent implements OnInit {
 		}
 
 		return IDs
-	}
+	}*/
 
 	private sortArrays() {
-		this.sortAllLocations(SortColumn.DISPLAY)
+		this.mutableLocations = sort(this.locations, SortColumn.DISPLAY, this.locationSort) as Location[]
 
-		this.sortAllPrinters(SortColumn.DISPLAY)
+		this.mutablePrinters = sort(this.printers, SortColumn.DISPLAY, this.printerSort) as Printer[]
 	}
 
 	/**
@@ -252,16 +269,7 @@ export class AdminComponent implements OnInit {
 			this.printerSort = this.printerSort === SortOrder.NORMAL ? SortOrder.REVERSED : SortOrder.NORMAL
 		}
 
-		console.debug(this.currentPrinterColumn)
-		this.printers = Sorter.sort(this.printers, column, this.printerSort) as Printer[]
-		/*switch(column) {
-			case SortColumn.DISPLAY:
-				this.printers = Sorter.sortByDisplayName(this.printers, order) as Printer[];
-				break;
-			case SortColumn.PATH:
-				this.printers = Sorter.sortByPathName(this.printers, order);
-				break;
-		}*/
+		this.mutablePrinters = sort(this.printers, column, this.printerSort) as Printer[]
 	}
 
 	/**
@@ -272,7 +280,7 @@ export class AdminComponent implements OnInit {
 	 * @return The sorted printer array
 	 */
 	sortPrinters(printers: Printer[], column: SortColumn, order: SortOrder): Printer[] {
-		return Sorter.sort(printers, column, order) as Printer[];
+		return sort(printers, column, order) as Printer[];
 		/*switch (column) {
 			case SortColumn.DISPLAY:
 				return Sorter.sort(printers, order);
@@ -288,7 +296,7 @@ export class AdminComponent implements OnInit {
 	sortAllLocations(column?: SortColumn) {
 		// TODO: Make this store per column not globally
 		this.locationSort = this.locationSort === SortOrder.NORMAL ? SortOrder.REVERSED : SortOrder.NORMAL
-		this.locations = Sorter.sort(this.locations, column ? column : SortColumn.DISPLAY, this.locationSort) as Location[]
+		this.mutableLocations = sort(this.locations, column ? column : SortColumn.DISPLAY, this.locationSort) as Location[]
 		/*switch(column) {
 			case SortColumn.DISPLAY:
 				this.locations = Sorter.sortByDisplayName(this.locations, this.locationSort) as Location[]
@@ -300,7 +308,7 @@ export class AdminComponent implements OnInit {
 	 * Show the login prompt
 	 */
 	showLogin() {
-		this.openDialog('a').afterClosed().subscribe((loggedIn: boolean) => {
+		this.openDialog(DialogSelection.LOGIN_PROMPT).afterClosed().subscribe((loggedIn: boolean) => {
 			this.authorized = loggedIn
 			this.cookies.set('authorized', this.authorized)
 		})
@@ -319,19 +327,27 @@ export class AdminComponent implements OnInit {
 		}
 	}
 
-	getSortColumn(column?: string): SortColumn {
-		switch (column) {
-			case 'path':
-				return SortColumn.PATH
-			default:
-				return SortColumn.DISPLAY
+	/**
+	 * Filter the tables based on the filter text and column
+	 */
+	filter() {
+		switch (this.currentTab) {
+			case Tabs.PRINTER:
+				this.mutablePrinters = this.printers.filter((printer: Printer) => {
+					return RegExp(`.*${this.filterText}.*`, 'i').test(printer[this.filterColumn])
+				})
+				break;
+			case Tabs.LOCATION:
+				this.mutableLocations = this.locations.filter((location: Location) => {
+					return RegExp(`.*${this.filterText}.*`, 'i').test(location[this.filterColumn])
+				})
 		}
 	}
 }
 
 @Component({
-	templateUrl: '../../views/home.component.html',
-	styleUrls: ['../../styles/home.component.css']
+	templateUrl: '../views/home.component.html',
+	styleUrls: ['../styles/home.component.css']
 })
 export class AddPrintersComponent implements OnInit {
 	printers: Printer[] = [];
@@ -544,8 +560,8 @@ export class AddPrintersComponent implements OnInit {
 }
 
 @Component({
-	templateUrl: '../../views/faq.component.html',
-	styleUrls: ['../../styles/faq.component.css']
+	templateUrl: '../views/faq.component.html',
+	styleUrls: ['../styles/faq.component.css']
 })
 export class FAQComponent {
 	header: string = "AGIT's Printer FAQ";
@@ -581,17 +597,8 @@ export class FAQComponent {
 }
 
 @Component({
-	selector: 'app-root',
-	templateUrl: '../../views/app.component.html',
-	styleUrls: ['../../styles/app.component.css']
-})
-export class AppComponent {
-
-}
-
-@Component({
-	templateUrl: '../../views/main.component.html',
-	styleUrls: ['../../styles/main.component.css']
+	templateUrl: '../views/main.component.html',
+	styleUrls: ['../styles/main.component.css']
 })
 export class HomeComponent {
 	department: string = 'AGIT';

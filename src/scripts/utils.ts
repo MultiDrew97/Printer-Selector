@@ -1,63 +1,42 @@
-// import {Location, Printer} from "./models";
-import {Data} from "@angular/router";
+import {Data} from "./models";
 import {SortColumn, SortOrder} from "./enums";
 
-export class Utils {
-  /**
-   * Format the given string using the arguments passed
-   * @param formatString The string to use for the format
-   * @param args The format arguments to use
-   * @returns The formatted string
-   */
-  static format(formatString: string, ...args: any[]): string {
-    for (let i = 0; i < args.length; i++) {
-      formatString = formatString.replace(`{${i}}`, args[i])
-    }
+/**
+ * Format the given string using the arguments passed
+ * @param formatString The string to use for the format
+ * @param args The format arguments to use
+ * @returns The formatted string
+ */
+export const format = (formatString: string, ...args: any[]): string => {
+	args.forEach((arg, index) => {
+		formatString = formatString.replace(`{${index}}`, arg)
+	})
+	/*for (let i = 0; i < args.length; i++) {
+		formatString = formatString.replace(`{${i}}`, args[i])
+	}*/
 
-    return formatString
-  }
+	return formatString
 }
 
-export class Sorter {
-	static sort(data: Data[], column: SortColumn, order: SortOrder): Data[] {
-		return data.sort((a: Data, b: Data): number => {
-			let value1 = a[column].charCodeAt(0)
-			let value2 = b[column].charCodeAt(0)
+/**
+ * Sort an array of Data using the specified column in the specified order
+ * @param data The array of data to sort
+ * @param column The column to sort on
+ * @param order The order to sort in
+ * @returns The sorted data array
+ */
+export const sort = (data: Data[], column: SortColumn, order: SortOrder): Data[] => {
+	return data.sort((a: Data, b: Data): number => {
+		let value1: string = a[column].toLowerCase();
+		let value2: string = b[column].toLowerCase();
 
-			switch(order) {
-				case SortOrder.NORMAL:
-					return value1 - value2
-				case SortOrder.REVERSED:
-					return value2 - value1
-			}
-		})
-	}
-
-	/*static sortByDisplayName(arr: Data[], sortOrder: SortOrder): Data[] {
-		return arr.sort((a: Data, b: Data): number => {
-			let value1 = a.displayName.charCodeAt(0)
-			let value2 = b.displayName.charCodeAt(0)
-
-			switch(sortOrder) {
-				case SortOrder.NORMAL:
-					return value1 - value2
-				case SortOrder.REVERSED:
-					return value2 - value1
-			}
-		})
-	}
-
-	static sortByPathName(arr: Printer[], sortOrder: SortOrder): Printer[] {
-		return arr.sort((a: Printer, b: Printer): number => {
-			let value1 = a.pathName.charCodeAt(0)
-			let value2 = b.pathName.charCodeAt(0)
-
-			switch(sortOrder) {
-				case SortOrder.NORMAL:
-					return value1 - value2
-				case SortOrder.REVERSED:
-					return value2 - value1
-			}
-		})
-	}*/
+		switch (order) {
+			case SortOrder.NORMAL:
+				return value1.localeCompare(value2)
+			//return value1 - value2
+			case SortOrder.REVERSED:
+				return value2.localeCompare(value1)
+			//return value2 - value1
+		}
+	})
 }

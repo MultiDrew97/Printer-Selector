@@ -19,6 +19,7 @@
 		"@angular/platform-browser-dynamic": "~12.1.0-",
 		"@angular/router": "~12.1.0-",
 		"base64-ts": "^2.0.1",
+		"karma-requirejs": "^1.1.0",
 		"ng-cli-pug-loader": "^0.2.2",
 		"nodemailer": "^6.6.3",
 		"rxjs": "~6.6.0",

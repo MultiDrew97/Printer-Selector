@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Resolve} from "@angular/router";
-import {Location, Printer} from "../../scripts/models";
-import {APIService} from "../services/services";
+import {Location, Printer} from "../scripts/models";
+import {APIService} from "./services";
 import {Observable} from "rxjs";
 
 @Injectable({

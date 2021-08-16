@@ -1,40 +1,51 @@
 <div id="admin-panel">
 	<h1 id="title">{{ title }}</h1>
+	<div id="logout-button" *ngIf="authorized">
+		<button (click)="cookies.delete('authorized'); authorized = false" mat-button>Logout</button>
+	</div>
 	<div id="tab-buttons">
-		<button id="tab-0" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.printer">Printers</button>
-		<button id="tab-1" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.location">Locations</button>
+		<button id="tab-0" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.PRINTER">Printers</button>
+		<button id="tab-1" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.LOCATION">Locations</button>
 	</div>
 
 	<div id="unauth" *ngIf="!authorized">
-		<h2>{{ prompts.unauthHeader }}</h2>
-		<p>{{ prompts.unauthSubHeader }}</p>
+		<h2>{{ prompts.unAuthHeader }}</h2>
+		<p>{{ prompts.unAuthSubHeader }}</p>
 		<button mat-button (click)="showLogin()">Login</button>
 	</div>
 
-	<!-- TODO: Add Filtering to the printers table -->
 	<!-- TODO: Add Searching for the tables -->
-	<table id="printers" class="display" *ngIf="currentTab === tabs.printer && authorized">
+	<div id="printers-filter-bar">
+		<!-- TODO: Adjust the filtering design -->
+		<label for="printers-filter-bar">Filter</label>
+		<select [(ngModel)]="filterColumn" (ngModelChange)="filterText = ''" *ngIf="currentTab === tabs.PRINTER">
+			<option [value]="columns.DISPLAY">Display Name</option>
+			<option [value]="columns.PATH">Path Name</option>
+		</select>
+		<input type="text" [(ngModel)]="filterText" (ngModelChange)="filter()"/>
+	</div>
+	<table id="printers" class="display" *ngIf="currentTab === tabs.PRINTER && authorized">
 		<thead class="printer-header">
 			<tr>
-				<td class="column-head display-name" (click)="sortAllPrinters(getSortColumn('display'))">Display Name</td>
-				<td class="column-head server-path" (click)="sortAllPrinters(getSortColumn('path'))">Path Name</td>
+				<td class="column-head display-name" (click)="sortAllPrinters(columns.DISPLAY)">Display Name</td>
+				<td class="column-head server-path" (click)="sortAllPrinters(columns.PATH)">Path Name</td>
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="data-row" *ngFor="let printer of printers" (click)="editPrinter(printer)">
+			<tr class="data-row" *ngFor="let printer of mutablePrinters" (click)="editPrinter(printer)">
 				<td class="display-name data">{{ printer.displayName }}</td>
 				<td class="path-name data">{{ printer.pathName }}</td>
 			</tr>
 		</tbody>
 	</table>
-	<table id="locations" class="display" *ngIf="currentTab === tabs.location && authorized">
+	<table id="locations" class="display" *ngIf="currentTab === tabs.LOCATION && authorized">
 		<thead class="location-header">
 			<tr>
-				<td class="column-head display-name" (click)="sortAllLocations(getSortColumn())">Location Name</td>
+				<td class="column-head display-name" (click)="sortAllLocations(columns.DISPLAY)">Location Name</td>
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="data-row" (click)="editLocation(location)" *ngFor="let location of locations">
+			<tr class="data-row" (click)="editLocation(location)" *ngFor="let location of mutableLocations">
 				<td class="location-name data">{{ location.displayName }}</td>
 			</tr>
 		</tbody>

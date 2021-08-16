@@ -1,7 +1,8 @@
-interface dbEntry {
+interface dbEntry extends Record<string, any> {
 	_id: string
 }
-interface Data extends dbEntry {
+export interface Data extends dbEntry {
+	[key: string]: any
 	displayName: string;
 }
 
