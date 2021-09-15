@@ -3,15 +3,14 @@ import {Component} from "@angular/core";
 import {FAQ} from "../../scripts/models";
 
 @Component({
-	templateUrl: '../../views/faq.component.html',
-	styleUrls: ['../../styles/faq.component.css']
+	templateUrl: '../../views/help.component.html',
+	styleUrls: ['../../styles/help.component.css']
 })
 export class FAQComponent {
 	header: string = "AGIT's Printer FAQ";
 	subheader: string = "If you have any issues getting your printer(s) installed, refer to below";
 	alts: {[key: string]: string} = {'run': 'The run box opened when pressing win + r'};
 
-	// TODO: Make this a part of the database?
 	tutorials = [
 		{
 			linkID: 'web',

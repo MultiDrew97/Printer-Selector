@@ -1,31 +1,75 @@
-<div id="admin-panel">
+<div id="unauth" *ngIf="!authorized">
+	<h2>{{ prompts.unAuthHeader }}</h2>
+	<p>{{ prompts.unAuthSubHeader }}</p>
+	<button mat-button (click)="showLogin()">Login</button>
+</div>
+
+<div id="admin-panel" *ngIf="authorized">
+	<div id="logout-button">
+		<button (click)="cookie.delete('authorized'); authorized = false" mat-button>Logout</button>
+	</div>
+
+	<br />
+
 	<h1 id="title">{{ title }}</h1>
-	<div id="logout-button" *ngIf="authorized">
-		<button (click)="cookies.delete('authorized'); authorized = false" mat-button>Logout</button>
-	</div>
-	<div id="tab-buttons">
-		<button id="tab-0" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.PRINTER">Printers</button>
-		<button id="tab-1" class="tab-button display-change" (click)="change($event.target!)" [value]="tabs.LOCATION">Locations</button>
-	</div>
 
-	<div id="unauth" *ngIf="!authorized">
-		<h2>{{ prompts.unAuthHeader }}</h2>
-		<p>{{ prompts.unAuthSubHeader }}</p>
-		<button mat-button (click)="showLogin()">Login</button>
-	</div>
+	<mat-tab-group (selectedTabChange)="tabChanged($event)" [(selectedIndex)]="currentTab">
+		<mat-tab label="Printers">
+			<div class="table-items">
+				<div id="printer-filter" class="filter">
+					<label for="printer-filter">Printer Filter:</label>
+					<input type="text" [(ngModel)]="filterText" (ngModelChange)="this.pds.filter = this.filterText"/>
+				</div>
 
-	<!-- TODO: Add Searching for the tables -->
-	<div id="printers-filter-bar">
-		<!-- TODO: Adjust the filtering design -->
-		<!--<label for="printers-filter-bar">Filter</label>-->
-		<select [(ngModel)]="filterColumn" (ngModelChange)="filterText = ''" *ngIf="currentTab === tabs.PRINTER">
-			<option [value]="columns.DISPLAY">Display Name</option>
-			<option [value]="columns.PATH">Path Name</option>
-		</select>
-		<input type="text" [(ngModel)]="filterText" (ngModelChange)="filter()"/>
-	</div>
-	<table id="printers" class="display" *ngIf="currentTab === tabs.PRINTER && authorized">
-		<thead class="printer-header">
+				<button mat-raised-button class="add-button" (click)="addPrinter()">Add Printer</button>
+			</div>
+			<div class="display-container">
+				<mat-table id="printer-table" matSort (matSortChange)="sortPrinters($event)" [dataSource]="pds" class="display scrollable">
+					<ng-container matColumnDef="displayName">
+						<mat-header-cell mat-sort-header *matHeaderCellDef class="column-head display-name">Display Name</mat-header-cell>
+						<mat-cell *matCellDef="let printer" class="data">{{ printer.displayName }}</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef="pathName">
+						<mat-header-cell mat-sort-header *matHeaderCellDef class="column-head server-path">Path Name</mat-header-cell>
+						<mat-cell *matCellDef="let printer" class="data">{{ printer.pathName }}</mat-cell>
+					</ng-container>
+
+					<mat-header-row *matHeaderRowDef="printerColumns" class="stick-top"></mat-header-row>
+					<mat-row *matRowDef="let rowData; columns: printerColumns" class="data-row" (click)="printerDialog(rowData)"></mat-row>
+				</mat-table>
+			</div>
+		</mat-tab>
+		<mat-tab label="Locations">
+			<div class="table-items">
+				<div id="location-filter" class="filter">
+					<label for="location-filter">Table Filter:</label>
+					<input type="text" [(ngModel)]="filterText" (ngModelChange)="this.lds.filter = this.filterText"/>
+				</div>
+
+				<button mat-raised-button class="add-button" (click)="addLocation()">Add Location</button>
+			</div>
+			<div class="display-container">
+				<mat-table id="location-table" matSort (matSortChange)="sortLocations($event)" [dataSource]="lds" class="display scrollable">
+					<ng-container matColumnDef="displayName">
+						<mat-header-cell mat-sort-header *matHeaderCellDef class="column-head display-name">Display Name</mat-header-cell>
+						<mat-cell *matCellDef="let location" class="data">{{ location.displayName }}</mat-cell>
+					</ng-container>
+
+					<ng-container matColumnDef="ipAddress">
+						<mat-header-cell mat-sort-header *matHeaderCellDef class="column-head ip-address">IP Address</mat-header-cell>
+						<mat-cell *matCellDef="let location" class="data">{{ location.ipAddress }}</mat-cell>
+					</ng-container>
+
+					<mat-header-row *matHeaderRowDef="locationColumns" class="stick-top"></mat-header-row>
+					<mat-row *matRowDef="let rowData; columns: locationColumns" class="data-row" (click)="locationDialog(rowData)"></mat-row>
+				</mat-table>
+			</div>
+		</mat-tab>
+	</mat-tab-group>
+
+	<!--<table id="printers" class="display scrollable" *ngIf="currentTab === tabs.PRINTER">
+		<thead id="printer-header" class="stick-top">
 			<tr>
 				<td class="column-head display-name" (click)="sortAllPrinters(columns.DISPLAY)">Display Name</td>
 				<td class="column-head server-path" (click)="sortAllPrinters(columns.PATH)">Path Name</td>
@@ -37,9 +81,10 @@
 				<td class="path-name data">{{ printer.pathName }}</td>
 			</tr>
 		</tbody>
-	</table>
-	<table id="locations" class="display" *ngIf="currentTab === tabs.LOCATION && authorized">
-		<thead class="location-header">
+	</table>-->
+
+	<!--<table id="locations" class="display scrollable" *ngIf="currentTab === tabs.LOCATION">
+		<thead id="location-header" class="stick-top">
 			<tr>
 				<td class="column-head display-name" (click)="sortAllLocations(columns.DISPLAY)">Location Name</td>
 			</tr>
@@ -49,9 +94,5 @@
 				<td class="location-name data">{{ location.displayName }}</td>
 			</tr>
 		</tbody>
-	</table>
-	<div id="add-buttons" *ngIf="authorized">
-		<button mat-raised-button class="add-button" (click)="addPrinter()" *ngIf="currentTab === 0">Add Printer</button>
-		<button mat-raised-button class="add-button" (click)="addLocation()" *ngIf="currentTab === 1">Add Location</button>
-	</div>
+	</table>-->
 </div>

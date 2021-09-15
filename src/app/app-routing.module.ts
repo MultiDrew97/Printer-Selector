@@ -1,15 +1,15 @@
 import {NgModule} from "@angular/core";
 import {Routes, RouterModule} from '@angular/router'
-import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent} from "./components";
-import {PrinterResolver, LocationResolver} from "./resolvers";
+import {AddPrintersComponent, AdminComponent, HelpComponent, MainComponent} from "./components";
+import {PrinterResolver, LocationResolver, FAQResolver, TutorialResolver} from "./resolvers";
 
 /**
  * Routes for the application
   */
 const routes: Routes = [
 	{
-		path: '',
-		component: HomeComponent
+		path: 'home',
+		component: MainComponent
 	},
 	{
 		path: 'printers',
@@ -28,11 +28,12 @@ const routes: Routes = [
 		}
 	},
 	{
-		path: 'faq',
-		component: FAQComponent
-		/*resolve: {
+		path: 'help',
+		component: HelpComponent,
+		resolve: {
+			tutorials: TutorialResolver,
 			faqs: FAQResolver
-		}*/
+		}
 	}
 ]
 

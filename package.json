@@ -21,6 +21,7 @@
 		"base64-ts": "^2.0.1",
 		"karma-requirejs": "^1.1.0",
 		"ng-cli-pug-loader": "^0.2.2",
+		"ngx-cookie-service": "^12.0.3",
 		"nodemailer": "^6.6.3",
 		"rxjs": "~6.6.0",
 		"tslib": "^2.2.0",

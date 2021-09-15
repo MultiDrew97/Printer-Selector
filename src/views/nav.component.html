@@ -1,0 +1,7 @@
+<nav id="route-links">
+	<a class="route-link" *ngFor="let link of links" [routerLink]="link.link" [routerLinkActive]="['active']">{{ link.text }}</a>
+	<!--<a class="route-link" [routerLink]="'/#/'" [routerLinkActive]="['active']">Home</a>
+	<a class="route-link" [routerLink]="'/printers'" [routerLinkActive]="['active']" href="/printers">Add Printers</a>
+	<a class="route-link" [routerLink]="'/help'" [routerLinkActive]="['active']" href="/help">Help</a>
+	<a [routerLink]="'/admin'" [routerLinkActive]="['active']" href="/admin">Admin</a>-->
+</nav>

@@ -1,15 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
-#route-links {
+#route-links, #bottom {
 	display: flex;
 	justify-content: space-between;
-	background-color: cadetblue;
+	background-color: #333;
+	box-sizing: border-box;
 }
 
-.route-link {
-	margin: 1%;
+#bottom {
+	position: sticky;
+	top: 100%;
+	width: 100%;
+	padding-left: 2%;
+}
+
+a.route-link {
+	padding: 1%;
 	float: right;
 	width: 30%;
 	box-sizing: border-box;
+	text-decoration: none;
+	color: #c0c0c0;
+	text-align: center;
 }
 
 .main {
@@ -19,14 +30,54 @@
 
 .dynamic {
 	display: flow;
+	margin: 0 8px;
 }
 
 html {
-	background-color: lightblue;
 	font: 12pt "sans-serif";
 	/*white-space: nowrap;*/
 }
 
+
+body {
+	margin: 0;
+	background-color: lightblue;
+	height: 100vh;
+}
+
+code {
+	background-color: #7777776F;
+	padding: 0.25% 1%;
+	border-radius: 5%;
+}
+
+html, body {
+	box-sizing: border-box;
+}
+
+.tutorial-steps {
+	line-height: 2.5rem;
+}
+
+.help {
+	max-width: 70%;
+}
+
+.help-container {
+	display: flex;
+	flex-direction: column;
+	margin-left: 10%;
+}
+
+::ng-deep .mat-tab-label {
+	font-weight: bold;
+}
+
+tutorials, faqs {
+	margin-left: 10%;
+}
+
+/* Form Based Styles*/
 #action-buttons {
 	display: flex;
 	box-sizing: border-box;
@@ -42,6 +93,85 @@ html {
 	display: inline-grid;
 }
 
-.input-pair {
-	margin: 2%;
+#edit-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 1% 0 2%;
+}
+
+#edit-form {
+	padding: 0 5%;
+	font: 1.5rem normal normal;
+	width: 90%;
+}
+
+.input-pair * {
+	font: 1.2rem normal;
+}
+
+/* Collapsible Based Styles */
+.collapsible {
+	background-color: #777;
+	color: white;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	border: #4581ff;
+	text-align: left;
+	outline: #ff6e4e;
+	font-size: 15px;
+}
+
+button.active, .collapsible:hover {
+	background-color: #555;
+}
+
+.collapsible::before {
+	content: '\002B';
+	color: white;
+	font-weight: bold;
+	margin-right: 3%;
+}
+
+button.active::before {
+	content: "\2212";
+}
+
+.route-link.active {
+	background-color: #111;
+	color: white;
+}
+
+.collapsible-content {
+	padding: 0 18px;
+	margin-left: 5%;
+	margin-bottom: 1%;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.2s ease-out;
+	background-color: #f1f1f1;
+	display: block;
+}
+
+.collapsible-container {
+	max-width: 90%;
+	max-height: 100%;
+	height: auto;
+	margin: 0 5%;
+}
+
+.scrollable {
+	overflow-y: scroll;
+	max-height: 500px;
+	/*display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-content: space-between;
+	align-items: stretch;*/
+}
+
+.stick-top {
+    position: sticky;
+	top: 0;
 }

@@ -3,13 +3,13 @@
 		<form id="new-location"  (ngSubmit)="create()">
 			<div class="input-pair">
 				<label for="location">{{ prompts.locationName }}</label>
-				<input (ngModelChange)="validate()" type="text" [(ngModel)]="locationName" name="locationName" id="location" />
+				<input (ngModelChange)="validate()" type="text" [(ngModel)]="displayName" name="locationName" id="location" />
 			</div>
 
 			<div class="input-pair">
 				<label for="printers">{{ prompts.printers }}</label>
 				<select id="printers" multiple >
-					<option *ngFor="let printer of printers" [value]="printer._id" class="printer">{{ printer.displayName }}</option>
+					<option *ngFor="let printer of pds.data" [value]="printer._id" class="printer">{{ printer.displayName }}</option>
 				</select>
 			</div>
 		</form>

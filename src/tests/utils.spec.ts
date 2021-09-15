@@ -1,6 +1,6 @@
-import {format, sort} from "../scripts/utils";
+import {decode, encode, format, includedIn, sort} from "../scripts/utils";
 import {SortColumn, SortOrder} from "../scripts/enums";
-import {Location, Printer} from "../scripts/models";
+import {Help, Location, Printer} from "../scripts/models";
 import {APIService} from "../app/services";
 import {TestBed} from "@angular/core/testing";
 import {HttpClientModule} from "@angular/common/http";
@@ -381,5 +381,36 @@ describe('String Formatting', () => {
 
 	it("Doesn't change anything about the string", () => {
 		expect(format('No Format Necessary')).toEqual('No Format Necessary')
+	})
+})
+
+describe('Find in Array', () => {
+	const help: Help[] = [
+		{
+			_id: 'testID',
+			linkID: 'web',
+			imgs: []
+		}
+	]
+
+	it('Should find the item', () => {
+		expect(includedIn(help, 'web')).toBeTrue()
+	})
+
+	it('Should not find the item', () => {
+		expect(includedIn(help, 'somethingElse')).toBeFalse()
+	})
+})
+
+describe('Base64 Encoding', () => {
+	const text: string = 'Hello, World!'
+	const textEncoded: string = 'SGVsbG8sIFdvcmxkIQ=='
+
+	it('Should encrypt the text in base64 encoding', () => {
+		expect(encode(text)).toEqual(textEncoded)
+	})
+
+	it('Should decrypt the encoded text to normal string', () => {
+		expect(decode(textEncoded)).toEqual(text)
 	})
 })

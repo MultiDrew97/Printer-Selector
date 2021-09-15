@@ -1,31 +1,31 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Location, Printer} from "../scripts/models";
-import {Buffer} from "buffer";
+import {CookieStore, FAQ, Location, Printer, Tutorial} from "../scripts/models";
+import {encode, format} from '../scripts/utils'
 
 @Injectable({
 	providedIn: 'root'
 })
-export class APIService {
-	private baseURI: string = 'http://localhost:3000/api';
+export class APIService implements PrinterAPI, LocationAPI, FAQAPI, TutorialAPI {
+	private readonly baseURI: string = 'http://localhost:3500/api';
 	private readonly auth: string;
 	private readonly headers: HttpHeaders;
 
 	constructor(
 		@Inject('creds') readonly creds: { user: string, pass: string },
-		private http: HttpClient
+		private readonly http: HttpClient
 	) {
-		this.auth = this.encode(`${this.creds.user}:${this.creds.pass}`);
+		this.auth = encode(format('{0}:{1}', this.creds.user, this.creds.pass));
 		this.headers = new HttpHeaders({
 			withCredentials: 'true',
 			Authorization: `Basic ${this.auth}`,
-			Accept: 'application/json, */*, plain/text'
+			Accept: 'application/json, plain/text'
 		});
 	}
 
 	getPrinters(): Observable<Printer[]> {
-		return this.http.get<Printer[]>(`${this.baseURI}/printers`, { headers: this.headers})
+		return this.http.get<Printer[]>(`${this.baseURI}/printers`, {headers: this.headers}).pipe()
 	}
 
 	getPrinter(id: string): Observable<Printer> {
@@ -33,63 +33,114 @@ export class APIService {
 	}
 
 	getLocations(): Observable<Location[]> {
-		return this.http.get<Location[]>(`${this.baseURI}/locations`, { headers: this.headers});
+		return this.http.get<Location[]>(`${this.baseURI}/locations`, {headers: this.headers});
 	}
 
 	getLocation(id: string): Observable<Location> {
-		return this.http.get<Location>(`${this.baseURI}/locations?id=${id}`, { headers: this.headers});
+		return this.http.get<Location>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers});
 	}
 
-	addLocation(location: Location): Observable<Location> {
-		return this.http.post<Location>(`${this.baseURI}/locations`, location, { headers: this.headers })
+	addLocation(location: Location): Observable<boolean> {
+		return this.http.post<boolean>(`${this.baseURI}/locations`, location, {headers: this.headers})
 	}
 
-	addPrinter(printer: Printer): Observable<Printer> {
-		return this.http.post<Printer>(`${this.baseURI}/printers`, printer, { headers: this.headers })
+	addPrinter(printer: Printer): Observable<boolean> {
+		return this.http.post<boolean>(`${this.baseURI}/printers`, printer, {headers: this.headers})
 	}
 
-	deletePrinter(id: string): Observable<Printer> {
-		return this.http.delete<Printer>(`${this.baseURI}/printers?id=${id}`, { headers: this.headers })
+	deletePrinter(id: string): Observable<boolean> {
+		return this.http.delete<boolean>(`${this.baseURI}/printers?id=${id}`, {headers: this.headers})
 	}
 
-	deleteLocation(id: string): Observable<Location> {
-		return this.http.delete<Location>(`${this.baseURI}/locations?id=${id}`, { headers: this.headers })
+	deleteLocation(id: string): Observable<boolean> {
+		return this.http.delete<boolean>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers})
 	}
 
-	updatePrinter(printer: Printer, locationID: string): Observable<Printer> {
-		return this.http.put<Printer>(`${this.baseURI}/printers?id=${printer._id}&locationID=${locationID}`, printer, {headers: this.headers})
+	updatePrinter(printer: Printer, locationID: string): Observable<boolean> {
+		return this.http.put<boolean>(`${this.baseURI}/printers?id=${printer._id}&locationID=${locationID}`, printer, {headers: this.headers})
 	}
 
-	updateLocation(location: Location): Observable<Location> {
-		return this.http.put<Location>(`${this.baseURI}/locations?id=${location._id}`, location, {headers: this.headers})
+	updateLocation(location: Location): Observable<boolean> {
+		return this.http.put<boolean>(`${this.baseURI}/locations?id=${location._id}`, location, {headers: this.headers})
 	}
 
 	sendEmail(email: string, printers: string[]): Observable<any> {
 		return this.http.post(`${this.baseURI}/emails`, {email: email, printers: printers}, {headers: this.headers})
 	}
 
-	private encode = (value: string): string => Buffer.from(value, 'binary').toString('base64');
+	deleteFAQ(id: string): Observable<any> {
+		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	}
 
-	// TODO: Reimplement this if I need to decode base64 string
-	//  private decode = (value: string): string => Buffer.from(value, 'base64').toString('binary');
+	deleteTutorial(id: string): Observable<any> {
+		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	}
+
+	getFAQ(id: string): Observable<FAQ> {
+		return this.http.get<FAQ>(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	}
+
+	getFAQs(): Observable<FAQ[]> {
+		return this.http.get<FAQ[]>(`${this.baseURI}/faqs`, {headers: this.headers});
+	}
+
+	getTutorial(id: string): Observable<Tutorial> {
+		return this.http.get<Tutorial>(`${this.baseURI}/tutorials?id=${id}`, {headers: this.headers});
+	}
+
+	getTutorials(): Observable<Tutorial[]> {
+		return this.http.get<Tutorial[]>(`${this.baseURI}/tutorials`, {headers: this.headers});
+	}
+}
+
+interface PrinterAPI {
+	getPrinters(): Observable<Printer[]>
+
+	getPrinter(id: string): Observable<Printer>
+
+	addPrinter(printer: Printer): Observable<boolean>
+
+	deletePrinter(id: string): Observable<boolean>
+
+	updatePrinter(printer: Printer, locationID: string): Observable<boolean>
+}
+
+interface LocationAPI {
+	getLocations(): Observable<Location[]>
+
+	getLocation(id: string): Observable<Location>
+
+	addLocation(location: Location): Observable<boolean>
+
+	updateLocation(location: Location): Observable<boolean>
+
+	deleteLocation(id: string): Observable<boolean>
+}
+
+interface FAQAPI {
+	getFAQs(): Observable<FAQ[]>;
+	getFAQ(id: string): Observable<FAQ>;
+	deleteFAQ(id: string): Observable<any>;
+}
+
+interface TutorialAPI {
+	getTutorials(): Observable<Tutorial[]>;
+	getTutorial(id: string): Observable<Tutorial>;
+	deleteTutorial(id: string): Observable<any>;
 }
 
 @Injectable({
 	providedIn: "root"
 })
 export class CookiesService {
-	cookieStore = {};
-	readonly days: number = 1
+	private cookieStore: CookieStore = {};
+	private readonly days: number = 1
 
-	constructor(@Inject('req') private readonly req: any) {
-		if (this.req !== null) {
-			this.parseCookies(this.req.cookies);
-		} else {
-			this.parseCookies(document.cookie);
-		}
+	constructor() {
+		this.parseCookies()
 	}
 
-	public parseCookies(cookies: any) {
+	private parseCookies(cookies: string = document.cookie) {
 		this.cookieStore = {}
 
 		if (!(!!cookies)) {
@@ -99,27 +150,27 @@ export class CookiesService {
 		let cookiesArr: any[] = cookies.split(';');
 		for (const cookie of cookiesArr) {
 			const cookieArr = cookie.split('=');
-			// @ts-ignore
-			this.cookieStore[cookieArr[0]] = cookieArr[1];
+			this.cookieStore[cookieArr[0].trim()] = cookieArr[1];
 		}
 
 		return
 	}
 
-	get(key?: string) {
-		// @ts-ignore
-		return (key ? (!!this.cookieStore[key] ? this.cookieStore[key] : null) :  this.cookieStore) ;
+	getCookie(key?: string) {
+		return (key ? (!!this.cookieStore[key] ? this.cookieStore[key] : null) : this.cookieStore);
 	}
 
-	set(key: string, value: any) {
+	setCookie(key: string, value: any) {
 		const date = new Date();
 
 		// Set it expire in a certain number of days
 		date.setTime(date.getTime() + (this.days * 24 * 60 * 60 * 1000));
 		document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
+
+		this.parseCookies();
 	}
 
-	delete(key: string) {
+	deleteCookie(key: string) {
 		const date = new Date();
 
 		// Set it expire in -1 days
@@ -127,5 +178,7 @@ export class CookiesService {
 
 		// Set it
 		document.cookie = `${key}=;expires=${date.toUTCString()};path=/`;
+
+		this.parseCookies()
 	}
 }

@@ -1,0 +1,20 @@
+<div class="container collapsible-container">
+	<div [id]="tutorial.linkID" *ngFor="let tutorial of tutorials" class="tutorial help">
+		<button class="collapsible tutorial" (click)="toggle($event.target)">{{ tutorial.title }}</button>
+		<div class="collapsible-content">
+			<p class="tutorial-description" *ngIf="tutorial.description !== ''">{{tutorial.description}}</p>
+
+			<ol class="tutorial-steps steps-container">
+				<li *ngFor="let step of tutorial.steps" [innerHTML]="step | HTMLSanitizer" class="tutorial-step step-item"></li>
+			</ol>
+
+			<div *ngFor="let img of tutorial.imgs" class="collapsible-container image-container">
+				<button class="collapsible image" (click)="toggle($event.target)">{{img.title}}</button>
+				<figure class="collapsible-content" [id]="img.linkID">
+					<img src="assets/imgs/{{img.name}}.PNG" [alt]="img.alt" class="help-image"/>
+					<figcaption *ngIf="img.alt != ''" class="image-description" [innerHTML]="img.alt | HTMLSanitizer"></figcaption>
+				</figure>
+			</div>
+		</div>
+	</div>
+</div>

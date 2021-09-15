@@ -1,18 +1,7 @@
-.input-pair, #edit-location {
-
-}
-
-.input-pair {
-	margin: 2%;
-}
-
-#edit-location {
-	padding: 0 5%;
-}
-
 .printer {
 	float: left;
 	width: 50%;
 	border-bottom: 2px black solid;
 	box-sizing: border-box;
+	font: 1.2rem normal normal;
 }

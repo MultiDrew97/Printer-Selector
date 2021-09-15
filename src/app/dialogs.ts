@@ -1,6 +1,8 @@
-import {Component, Inject, OnInit} from "@angular/core";
+import {AfterViewInit, Component, Inject, OnInit} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Location, Printer} from "../scripts/models";
+import {APIService} from "./services";
+import {LocationDataSource, PrinterDataSource} from "../scripts/datasource";
 
 @Component({
 	templateUrl: '../views/confirm.component.html',
@@ -10,6 +12,7 @@ export class ConfirmDialogComponent implements OnInit {
 	message: string = ''
 	decline: string = 'No'
 	accept: string = 'Yes'
+
 	constructor(private dialogRef: MatDialogRef<ConfirmDialogComponent>,
 				@Inject(MAT_DIALOG_DATA) private data: any) {
 	}
@@ -48,9 +51,9 @@ export class AlertDialogComponent implements OnInit {
 	styleUrls: ['../styles/location.component.css']
 })
 export class LocationDialogComponent {
-	locationName: string = '';
+	displayName: string = '';
 	valid: boolean = false;
-	printers: Printer[];
+	pds!: PrinterDataSource;
 	prompts = {
 		printers: 'Printers for Location:',
 		locationName: 'Location Name:'
@@ -62,8 +65,12 @@ export class LocationDialogComponent {
 	}
 
 	constructor(readonly dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
-		this.printers = this.data.printers;
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
+
+		api.getPrinters().subscribe(printers => {
+			this.pds = new PrinterDataSource(printers)
+		})
 	}
 
 	close() {
@@ -72,7 +79,7 @@ export class LocationDialogComponent {
 
 	create() {
 		let data = {
-			locationName: this.locationName,
+			displayName: this.displayName,
 			printers: this.getPrinters()
 		}
 		this.dialogRef.close(data);
@@ -93,7 +100,7 @@ export class LocationDialogComponent {
 	}
 
 	validateLocation(): boolean {
-		return this.locationName.length > 0 && this.locationName !== '';
+		return this.displayName.length > 0 && this.displayName !== '';
 	}
 
 	getPrinters(): string[] {
@@ -174,8 +181,10 @@ export class PrinterDialogComponent implements OnInit {
 		pathName: '',
 		locationID: ''
 	};
-	printers: Printer[];
-	locations: Location[];
+	/*printers: Printer[];
+	locations: Location[];*/
+	lds!: LocationDataSource;
+
 	prompts = {
 		displayName: 'Display Name:',
 		pathName: 'Path Name (i.e. ADMIN-IT):',
@@ -190,9 +199,11 @@ export class PrinterDialogComponent implements OnInit {
 	valid: boolean = false;
 
 	constructor(readonly dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
-		this.printers = this.data.printers
-		this.locations = this.data.locations
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
+		api.getLocations().subscribe(locations => {
+			this.lds = new LocationDataSource(locations)
+		})
 	}
 
 	ngOnInit() {
@@ -276,54 +287,73 @@ export class PromptDialogComponent implements OnInit {
 	templateUrl: '../views/edit-location.component.html',
 	styleUrls: ['../styles/edit-location.component.css']
 })
-export class EditLocationDialogComponent implements OnInit {
+export class EditLocationDialogComponent implements AfterViewInit {
 	location: Location;
-	printers: Printer[];
 	locationName: string;
-
+	ipAddress: string;
+	changed: boolean = false;
+	pds!: PrinterDataSource;
+	newPrinters: string[] = [];
 	valid: boolean = true;
 
 	buttons = {
 		close: 'Cancel',
-		finished: 'Update'
+		finished: 'Update',
+		delete: 'Remove'
 	}
 
 	prompts = {
 		locationName: 'Location Name:',
 		locationID: 'Location ID:',
-		locationPrinters: 'Printers:'
+		locationPrinters: 'Printers:',
+		ipAddress: 'IP Address:'
 	}
+
 	constructor(private dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
 		this.location = this.data.location;
-		this.locationName = this.data.location.getDisplayName();
-		this.printers = this.data.printers;
+		this.locationName = this.data.location.displayName;
+		this.ipAddress = this.data.location.ipAddress;
+
+		api.getPrinters().subscribe(printers => {
+			this.pds = new PrinterDataSource(printers)
+			this.getCurrentPrinters()
+		})
 	}
 
-	ngOnInit() {
-		setTimeout(() => {
+	ngAfterViewInit() {
+		// this.getPrinters()
+		/*setTimeout(() => {
 			this.getPrinters();
-		}, 1)
+		}, 1)*/
 	}
 
-	getPrinters() {
+	getCurrentPrinters() {
 		for (const locationPrinter of this.location.printers) {
-			for (const printer of this.printers) {
-				if (locationPrinter._id === printer._id) {
-					(document.getElementById(printer._id) as HTMLOptionElement).selected = true
-				}
+			this.newPrinters.push(locationPrinter._id)
+		}
+	}
+
+	getPrinters(): Printer[] {
+		let printerList: Printer[] = []
+
+		for (const printer of this.pds.data) {
+			for (const selected of this.newPrinters) {
+				if (printer._id !== selected)
+					continue
+
+				printerList.push(printer)
 			}
 		}
-		/*
-		let printers = this.location.getPrinters()
 
-		printers.forEach((printerID: string) => {
-			for (let i = 0; i < this.printers.length; i++) {
-				if (printerID === this.printers[i].getID()) {
+		return printerList;
+	}
 
-				}
-			}
-		})*/
+	delete() {
+		this.dialogRef.close({
+			delete: true
+		})
 	}
 
 	close() {
@@ -331,13 +361,23 @@ export class EditLocationDialogComponent implements OnInit {
 	}
 
 	finished() {
-		if (this.valid) {
-			this.dialogRef.close(this.location)
+		if (this.valid && this.changed) {
+			this.dialogRef.close({
+				location: {
+					_id: this.location._id,
+					displayName: this.locationName,
+					ipAddress: this.ipAddress,
+					printers: this.getPrinters()
+				}
+			})
+		} else {
+			this.close();
 		}
 	}
 
 	validate() {
 		let validName: boolean = this.validateName();
+		this.changed = true;
 
 		if(!validName) {
 			// location name error message
@@ -359,17 +399,18 @@ export class EditLocationDialogComponent implements OnInit {
 })
 export class EditPrinterDialogComponent implements OnInit {
 	printer: Printer;
-	locations: Location[]
 	printerName: string = '';
 	pathName: string = '';
 	locationID: string = '';
 	oldLocation: string = '';
+	lds!: LocationDataSource;
 
 	valid: boolean = true
 
 	buttons = {
 		close: 'Cancel',
-		finished: 'Update'
+		finished: 'Update',
+		delete: 'Remove'
 	}
 
 	prompts = {
@@ -379,18 +420,29 @@ export class EditPrinterDialogComponent implements OnInit {
 		locations: 'Printer Location:'
 	}
 	constructor(private dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
 		this.printer = this.data.printer
-		this.locations = this.data.locations
+
+		api.getLocations().subscribe(locations => {
+			this.lds = new LocationDataSource(locations)
+			this.getLocationID()
+		})
 	}
 
 	ngOnInit() {
 		this.printerName = this.printer.displayName
 		this.pathName = this.printer.pathName
 
-		setTimeout(() => {
+		/*setTimeout(() => {
 			this.getLocationID()
-		}, 1)
+		}, 1)*/
+	}
+
+	delete() {
+		this.dialogRef.close({
+			delete: true
+		})
 	}
 
 	close() {
@@ -399,6 +451,10 @@ export class EditPrinterDialogComponent implements OnInit {
 
 	finished() {
 		if(this.valid) {
+
+			this.printer.displayName = this.printer.displayName !== this.printerName ? this.printerName : this.printer.displayName;
+			this.printer.pathName = this.printer.pathName !== this.pathName ? this.pathName : this.printer.pathName;
+
 			let updated = {
 				printer: this.printer,
 				locationID: this.locationID
@@ -444,7 +500,7 @@ export class EditPrinterDialogComponent implements OnInit {
 	}
 
 	getLocationID(): void {
-		for (const location of this.locations) {
+		for (const location of this.lds.data) {
 			if (location.printers.some(printer => printer._id === this.printer._id)) {
 				this.locationID = location._id;
 				this.oldLocation = this.locationID;

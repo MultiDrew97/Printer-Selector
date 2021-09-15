@@ -1,0 +1,13 @@
+#top {
+	text-align: center;
+}
+
+::ng-deep figure {
+	margin: 0
+}
+
+/*
+Good known background color for collapsible-content with white background
+::ng-deep .collapsible-content {
+	background-color: #51AFDF60;
+}*/

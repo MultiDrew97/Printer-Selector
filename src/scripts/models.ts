@@ -2,7 +2,6 @@ interface dbEntry extends Record<string, any> {
 	_id: string
 }
 export interface Data extends dbEntry {
-	[key: string]: any
 	displayName: string;
 }
 
@@ -15,21 +14,30 @@ export interface Printer extends Data {
 	checked: boolean;
 }
 
-// TODO: Determine a more descriptive name for this base interface for FAQs and Tutorials
-interface _ extends dbEntry {
+export interface Help extends dbEntry {
 	linkID: string;
-	// This should be in the order that they will appear in the tutorial/faq
-	// TODO: Ensure that these are coming in the order expected from the database
-	imgs: string[];
+	imgs: Image[];
 }
 
-export interface FAQ extends _ {
+export interface FAQ extends Help {
 	question: string;
 	answer: string;
 }
 
-export interface Tutorial extends _ {
+export interface Tutorial extends Help {
 	title: string;
+	description: string;
 	steps: string[];
 }
 
+export interface Image extends dbEntry, Help {
+	title: string;
+	name: string
+	alt: string
+	step?: number
+}
+
+export interface CookieStore {
+	[k: string]: string;
+	value?: any;
+}

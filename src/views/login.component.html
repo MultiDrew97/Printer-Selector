@@ -3,12 +3,12 @@
 		<form id="login" (ngSubmit)="login()">
 			<div class="input-pair">
 				<label for="username">{{ prompts.username }}</label>
-				<input id="username" name="username" type="text" [(ngModel)]="user" (ngModelChange)="validate()" required />
+				<input id="username" name="username" autocomplete="on" type="text" [(ngModel)]="user" (ngModelChange)="validate()" required />
 			</div>
 
 			<div class="input-pair">
 				<label for="password">{{ prompts.password }}</label>
-				<input id="password" name="password" type="password" [(ngModel)]="pass" (ngModelChange)="validate()" required />
+				<input id="password" name="password" autocomplete="on" type="password" [(ngModel)]="pass" (ngModelChange)="validate()" required />
 			</div>
 		</form>
 	</mat-dialog-content>

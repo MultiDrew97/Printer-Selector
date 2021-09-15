@@ -98,7 +98,6 @@ export class AdminComponent implements OnInit {
 
 		this.openDialog('p').afterClosed().subscribe((newPrinter: Printer) => {
 			console.debug(newPrinter)
-			// TODO: Implement adding printers
 		})
 	}
 

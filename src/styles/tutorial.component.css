@@ -1,0 +1,43 @@
+img {
+	vertical-align: top;
+}
+
+.help-images {
+	display: grid;
+	width: fit-content;
+}
+
+details {
+	padding-left: 1%;
+}
+
+.help-image {
+
+}
+
+.image-container {
+	max-width: 90%;
+}
+
+.help-image {
+	max-width: 100%;
+	width: auto;
+}
+
+::ng-deep .image-container .collapsible-content {
+	margin-bottom: 3%;
+}
+
+.image {
+	justify-content: center;
+}
+
+::ng-deep aside {
+	margin-left: 5%;
+	font-style: italic;
+}
+
+::ng-deep aside:before {
+	content: "\2212";
+	padding-right: 1%;
+}

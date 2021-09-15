@@ -9,8 +9,8 @@ import {ConfirmDialogComponent} from "./confirm-dialog.component";
 import {AlertDialogComponent} from "./alert-dialog.component";
 
 @Component({
-	templateUrl: '../../views/home.component.html',
-	styleUrls: ['../../styles/home.component.css']
+	templateUrl: '../../views/add-printer.component.html',
+	styleUrls: ['../../styles/add-printer.component.css']
 })
 export class AddPrintersComponent implements OnInit {
 	printers: Printer[] = [];

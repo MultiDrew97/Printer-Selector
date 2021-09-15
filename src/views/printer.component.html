@@ -12,7 +12,7 @@
 			<div class="form-field">
 				<label for="locations">{{ prompts.locationName }}</label>
 				<select id="locations" name="location" [(ngModel)]="newPrinter.locationID" (ngModelChange)="validate()">
-					<option *ngFor="let location of locations" [value]="location._id">{{ location.displayName }}</option>
+					<option *ngFor="let location of lds.data" [value]="location._id">{{ location.displayName }}</option>
 				</select>
 			</div>
 		</form>

@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {HostListener, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {MatDialogConfig, MatDialogModule} from "@angular/material/dialog";
 import {FormsModule} from "@angular/forms";
@@ -8,7 +8,16 @@ import {HttpClientModule} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatButtonModule} from "@angular/material/button";
 import {AppRoutingModule} from "./app-routing.module";
-import {AddPrintersComponent, AdminComponent, FAQComponent, HomeComponent, AppComponent} from "./components";
+import {
+	AddPrintersComponent,
+	AdminComponent,
+	AppComponent,
+	FAQComponent,
+	HelpComponent,
+	MainComponent,
+	NavComponent,
+	TutorialComponent
+} from "./components";
 import {LocationResolver, PrinterResolver} from "./resolvers";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatOptionModule} from "@angular/material/core";
@@ -26,12 +35,17 @@ import {
 	PrinterDialogComponent,
 	PromptDialogComponent
 } from './dialogs'
+import {HtmlSanitizer} from "./pipes";
+import {CdkTableModule} from "@angular/cdk/table";
+import {MatTableModule} from "@angular/material/table";
+import {MatTabsModule} from "@angular/material/tabs";
+import {CookieService} from "ngx-cookie-service";
 
 @NgModule({
 	declarations: [
 		AddPrintersComponent,
 		AdminComponent,
-		HomeComponent,
+		MainComponent,
 		EmailDialogComponent,
 		ConfirmDialogComponent,
 		AlertDialogComponent,
@@ -41,8 +55,12 @@ import {
 		EditPrinterDialogComponent,
 		EditLocationDialogComponent,
 		LoginDialogComponent,
+		HelpComponent,
+		TutorialComponent,
 		FAQComponent,
-		AppComponent
+		AppComponent,
+		HtmlSanitizer,
+		NavComponent
 	],
 	imports: [
 		BrowserModule,
@@ -57,7 +75,10 @@ import {
 		MatOptionModule,
 		MatSortModule,
 		MatSelectModule,
-		MatListModule
+		MatListModule,
+		CdkTableModule,
+		MatTableModule,
+		MatTabsModule
 	],
 	providers: [
 		APIService,
@@ -65,6 +86,7 @@ import {
 		PrinterResolver,
 		LocationResolver,
 		CookiesService,
+		CookieService,
 		{
 			provide: 'req',
 			useValue: null
@@ -75,11 +97,24 @@ import {
 				user: 'sysadmin',
 				pass: 'SoliDeoGloria10'
 			}
+		},
+		{
+			provide: 'key',
+			useValue: '3d3834d3112ab3236d06f9d370e085795740784321c29bdf88e1bb1b'
 		}
 	],
 	bootstrap: [
-		AppComponent
+		AppComponent,
+		NavComponent
 	]
 })
 export class AppModule {
+	constructor(private readonly cookies: CookieService) {
+	}
+
+	@HostListener('beforeunload', ['$event'])
+	cleanUp(_: BeforeUnloadEvent) {
+		console.debug('Clean up')
+		this.cookies.deleteAll()
+	}
 }

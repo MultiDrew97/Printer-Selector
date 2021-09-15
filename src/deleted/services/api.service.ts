@@ -72,8 +72,7 @@ export class APIService {
 
 	private encode = (value: string): string => Buffer.from(value, 'binary').toString('base64');
 
-	// TODO: Reimplement this if I need to decode base64 string
-	//  private decode = (value: string): string => Buffer.from(value, 'base64').toString('binary');
+	private decode = (value: string): string => Buffer.from(value, 'base64').toString('binary');
 }
 
 */

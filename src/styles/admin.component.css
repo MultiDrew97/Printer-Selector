@@ -9,20 +9,22 @@
 	background-color: #555;
 }
 
+hr {
+	border-color: black
+}
+
 #tab-buttons {
 	width: 100%;
-	border-bottom: 3px black solid;
-	margin-bottom: 5%;
 }
 
 #admin-panel {
 	margin: 5%;
 }
 
-#add-buttons {
+/*#add-buttons {
 	margin: 5%;
 	float: right;
-}
+}*/
 
 #title {
 	text-align: center
@@ -36,18 +38,21 @@
 .display {
 	width: auto;
 	border-collapse: collapse;
-	border-spacing: unset;
 	text-align: center;
-	border-bottom: 2px black solid;
-	margin: 0 25%;
-	min-width: 50%;
+	min-width: 80%;
 	max-width: 100%;
+}
+
+.display-container {
+	display: flex;
+	justify-content: center;
 }
 
 .data {
 	font-size: 1.4rem;
-	border-left: 2px black solid;
-	border-right: 2px black solid;
+	justify-content: center;
+	/*border-left: 2px black solid;
+	border-right: 2px black solid;*/
 }
 
 .column-head {
@@ -59,6 +64,7 @@
 	border: 2px #555 solid;
 	font-weight: bold;
 	cursor: pointer;
+	width: 10%;
 }
 
 .display tbody tr:nth-child(even) {
@@ -73,8 +79,9 @@
 	cursor: pointer;
 }
 
-.display tbody tr:hover {
-	color: #999;
+.data-row:hover {
+	/*color: #999;*/
+	cursor: pointer;
 }
 
 #unauth {
@@ -85,10 +92,28 @@
 	float: right;
 }
 
-#printers-filter-bar {
+.table-items {
+	display: inline-flex;
+	justify-content: space-between;
+	justify-items: start;
+	width: 100%;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	margin: 2% 0 5% 0;
+}
+
+.filter {
 	display: grid;
 	justify-content: end;
 	justify-items: start;
 }
 
+#printer-header th, #location-header th {
+	position: sticky;
+	top: 0;
+}
+
+.display .data-row mat-cell:nth-child(odd) {
+	border-right: 2px black solid;
+}
 
