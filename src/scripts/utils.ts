@@ -1,4 +1,4 @@
-import {Data, Help, IpAddress} from "./models";
+import {Data, Help} from "./models";
 import {SortColumn, SortOrder} from "./enums";
 import {Buffer} from "buffer";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -24,12 +24,12 @@ export function format(formatString: string, ...args: any[]): string {
  * @param order The order to sort in
  * @returns The sorted data array
  */
-export function sort(data: Data[] | IpAddress[] , column: SortColumn, order: SortOrder): Data[] | IpAddress[] {
-	return data.sort((a: Data | IpAddress, b: Data | IpAddress): number => {
+export function sort(data: Data[], column: SortColumn, order: SortOrder): Data[] {
+	return data.sort((a: Data, b: Data): number => {
 		let value1: string
 		let value2: string
 
-		switch(column) {
+		switch (column) {
 			case SortColumn.DISPLAY:
 				value1 = a.displayName.toLowerCase()
 				value2 = b.displayName.toLowerCase()
@@ -118,25 +118,34 @@ export function clearActive(buttons: HTMLCollectionOf<Element>) {
 	}
 }
 
-export function navigate(hash: string, search?: string) {
-	window.location.hash = hash
-	window.location.search = search ?? ''
-}
-
+/**
+ * Convert a string to a number
+ * @param value The string to convert
+ */
 export function toNumber(value: string): number {
 	return Number(value)
 }
 
+/**
+ * Opens a dialog using the given parameters
+ * @param dialog The dialog reference to open a dialog with
+ * @param config The config of the dialog to open
+ * @param type The dialog component class to use to open a dialog of
+ */
 export function openDialog(dialog: MatDialog, config: MatDialogConfig, type: any) {
 	return dialog.open(type, config).afterClosed().toPromise();
 }
 
+/**
+ * Checks the IP Address of the current client machine
+ * @param apiKey The api key for the api call
+ */
 export function checkIPAddress(apiKey: string) {
+	function json(url: string) {
+		return fetch(url).then(res => res.json())
+	}
+
 	return json(`https://api.ipdata.co?api-key=${apiKey}&fields=ip`).then((data) => {
 		return data.ip
 	})
-}
-
-function json(url: string) {
-	return fetch(url).then(res => res.json())
 }
