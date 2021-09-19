@@ -1,9 +1,9 @@
 import {decode, encode, format, includedIn, sort} from "../scripts/utils";
 import {SortColumn, SortOrder} from "../scripts/enums";
 import {Help, Location, Printer} from "../scripts/models";
-import {APIService} from "../app/services";
 import {TestBed} from "@angular/core/testing";
 import {HttpClientModule} from "@angular/common/http";
+import {APIService} from "../app/services/api.service";
 
 describe('Sorter', () => {
 	let service: APIService;
@@ -11,6 +11,7 @@ describe('Sorter', () => {
 		{
 			_id: "60f720f7c50e7742da855d32",
 			displayName: "Admin",
+			ipAddress: '',
 			printers: [
 				{
 					_id: "60f720bdc50e7742da855d31",
@@ -29,7 +30,8 @@ describe('Sorter', () => {
 		{
 			_id: "60f9c6df8cddb60a02ad6515",
 			displayName: "Central",
-			"printers": [
+			ipAddress: '',
+			printers: [
 				{
 					_id: "60f9c7028cddb60a02ad6516",
 					pathName: "CN-Test",
@@ -94,6 +96,7 @@ describe('Sorter', () => {
 		{
 			_id: "60f720f7c50e7742da855d32",
 			displayName: "Admin",
+			ipAddress: '',
 			printers: [
 				{
 					_id: "60f720bdc50e7742da855d31",
@@ -112,7 +115,8 @@ describe('Sorter', () => {
 		{
 			_id: "60f9c6df8cddb60a02ad6515",
 			displayName: "Central",
-			"printers": [
+			ipAddress: '',
+			printers: [
 				{
 					_id: "60f9c7028cddb60a02ad6516",
 					pathName: "CN-Test",
@@ -144,7 +148,8 @@ describe('Sorter', () => {
 		{
 			_id: "60f9c6df8cddb60a02ad6515",
 			displayName: "Central",
-			"printers": [
+			ipAddress: '',
+			printers: [
 				{
 					_id: "60f9c7028cddb60a02ad6516",
 					pathName: "CN-Test",
@@ -174,6 +179,7 @@ describe('Sorter', () => {
 		{
 			_id: "60f720f7c50e7742da855d32",
 			displayName: "Admin",
+			ipAddress: '',
 			printers: [
 				{
 					_id: "60f720bdc50e7742da855d31",

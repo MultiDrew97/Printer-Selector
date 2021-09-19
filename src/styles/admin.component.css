@@ -43,6 +43,10 @@ hr {
 	max-width: 100%;
 }
 
+#admin-tabs {
+
+}
+
 .display-container {
 	display: flex;
 	justify-content: center;

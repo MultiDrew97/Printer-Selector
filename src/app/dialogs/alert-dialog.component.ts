@@ -1,4 +1,3 @@
-/*
 import {Component, Inject, OnInit} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
@@ -6,7 +5,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 	templateUrl: '../../views/alert.component.html',
 	styleUrls: ['../../styles/alert.component.css']
 })
-
 export class AlertDialogComponent implements OnInit {
 	message: string = ''
 	confirm: string = 'Ok'
@@ -22,4 +20,3 @@ export class AlertDialogComponent implements OnInit {
 		this.dialogRef.close()
 	}
 }
-*/

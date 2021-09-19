@@ -1,4 +1,3 @@
-/*
 import {Component, Inject} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
 
@@ -27,6 +26,8 @@ export class LoginDialogComponent {
 	login() {
 		if (this.user === this.creds.user && this.pass === this.creds.pass) {
 			this.finished()
+		} else {
+			this.pass = ''
 		}
 	}
 
@@ -53,4 +54,3 @@ export class LoginDialogComponent {
 		return this.pass.length > 0 && !/^\s+$/i.test(this.pass)
 	}
 }
-*/

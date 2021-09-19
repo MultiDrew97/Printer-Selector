@@ -1,7 +1,13 @@
 import {NgModule} from "@angular/core";
 import {Routes, RouterModule} from '@angular/router'
-import {AddPrintersComponent, AdminComponent, HelpComponent, MainComponent} from "./components";
-import {PrinterResolver, LocationResolver, FAQResolver, TutorialResolver} from "./resolvers";
+import {MainComponent} from "./components/main.component";
+import {GetPrintersComponent} from "./components/get-printers.component";
+import {AdminComponent} from "./components/admin.component";
+import {LocationResolver} from "./resolvers/location.resolver";
+import {HelpComponent} from "./components/help.component";
+import {TutorialResolver} from "./resolvers/tutorial.resolver";
+import {FAQResolver} from "./resolvers/faq.resolver";
+import {PrinterResolver} from "./resolvers/printer.resolver";
 
 /**
  * Routes for the application
@@ -13,7 +19,7 @@ const routes: Routes = [
 	},
 	{
 		path: 'printers',
-		component: AddPrintersComponent,
+		component: GetPrintersComponent,
 		resolve: {
 			printers: PrinterResolver,
 			locations: LocationResolver

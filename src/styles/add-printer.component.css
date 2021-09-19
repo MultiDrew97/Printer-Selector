@@ -1,73 +1,20 @@
-#add-header {
-	text-align: center;
+.form-field {
+	display: grid;
+	margin: 5%;
+
 }
 
-.selection-buttons {
-	display: inline-flex;
-	min-width: 90%;
-	max-width: 100%;
-	max-height: 100%;
+.action-button {
+	white-space: nowrap;
+}
+
+#dialog {
 	width: auto;
 	height: auto;
-	margin: 2% 0;
-	justify-content: flex-end;
-	box-sizing: border-box;
-}
-
-.selection-buttons button, .nav-buttons button {
-	border: 1px black solid;
-	margin: 0 5px
-}
-
-.nav-buttons {
-	display: flex;
-	justify-content: flex-end;
-	margin: 5% 0;
-}
-
-.container {
+	max-height: 100%;
 	max-width: 100%;
-	width: auto;
-	margin: 0 10%;
-	box-sizing: border-box;
 }
 
-.selection-buttons button:hover, .nav-buttons button:hover {
-	background-color: darkgrey;
-	color: azure;
+label {
+	max-width: 95%;
 }
-
-.printer {
-	float: left;
-	width: 33.3%;
-	padding: 2% 0;
-	box-sizing: border-box;
-}
-
-.location-set {
-	margin: 2% 5%;
-}
-
-#selection {
-	display: inline-flex;
-	align-content: center;
-}
-
-.printers {
-	margin-left: 5%;
-}
-
-/*::ng-deep .mat-tab-body-content {
-	background-color: #f1f1f1;
-	border: 3px black solid;
-	border-top: hidden;
-	box-sizing: border-box;
-}
-
-::ng-deep mat-tab-header {
-	border: 3px dimgrey solid;
-}*/
-
-/*::ng-deep .collapsible-container {
-	max-width: 100%;
-}*/

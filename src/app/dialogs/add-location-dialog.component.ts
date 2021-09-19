@@ -1,16 +1,16 @@
-/*
 import {Component, Inject} from "@angular/core";
+import {PrinterDataSource} from "../../scripts/datasource";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Printer} from "../../scripts/models";
+import {APIService} from "../services/api.service";
 
 @Component({
-	templateUrl: '../../views/location.component.html',
-	styleUrls: ['../../styles/location.component.css']
+	templateUrl: '../../views/add-location.component.html',
+	styleUrls: ['../../styles/add-location.component.css']
 })
-export class LocationDialogComponent {
-	locationName: string = '';
+export class AddLocationDialogComponent {
+	displayName: string = '';
 	valid: boolean = false;
-	printers: Printer[];
+	pds!: PrinterDataSource;
 	prompts = {
 		printers: 'Printers for Location:',
 		locationName: 'Location Name:'
@@ -22,8 +22,12 @@ export class LocationDialogComponent {
 	}
 
 	constructor(readonly dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
-		this.printers = this.data.printers;
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
+
+		api.getPrinters().subscribe(printers => {
+			this.pds = new PrinterDataSource(printers)
+		})
 	}
 
 	close() {
@@ -32,7 +36,7 @@ export class LocationDialogComponent {
 
 	create() {
 		let data = {
-			locationName: this.locationName,
+			displayName: this.displayName,
 			printers: this.getPrinters()
 		}
 		this.dialogRef.close(data);
@@ -53,7 +57,7 @@ export class LocationDialogComponent {
 	}
 
 	validateLocation(): boolean {
-		return this.locationName.length > 0 && this.locationName !== '';
+		return this.displayName.length > 0 && this.displayName !== '';
 	}
 
 	getPrinters(): string[] {
@@ -69,4 +73,3 @@ export class LocationDialogComponent {
 		return selected;
 	}
 }
-*/

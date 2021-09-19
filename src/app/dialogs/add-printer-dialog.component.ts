@@ -1,20 +1,22 @@
-/*
 import {Component, Inject, OnInit} from "@angular/core";
+import {LocationDataSource} from "../../scripts/datasource";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {Printer, Location} from "../../scripts/models";
+import {APIService} from "../services/api.service";
 
 @Component({
-	templateUrl: '../../views/printer.component.html',
-	styleUrls: ['../../styles/printer.component.css']
+	templateUrl: '../../views/add-printer.component.html',
+	styleUrls: ['../../styles/add-printer.component.css']
 })
-export class PrinterDialogComponent implements OnInit {
+export class AddPrinterDialogComponent implements OnInit {
 	newPrinter = {
 		displayName: '',
 		pathName: '',
 		locationID: ''
 	};
-	printers: Printer[];
-	locations: Location[];
+	/*printers: Printer[];
+	locations: Location[];*/
+	lds!: LocationDataSource;
+
 	prompts = {
 		displayName: 'Display Name:',
 		pathName: 'Path Name (i.e. ADMIN-IT):',
@@ -29,9 +31,11 @@ export class PrinterDialogComponent implements OnInit {
 	valid: boolean = false;
 
 	constructor(readonly dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
-		this.printers = this.data.printers
-		this.locations = this.data.locations
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
+		api.getLocations().subscribe(locations => {
+			this.lds = new LocationDataSource(locations)
+		})
 	}
 
 	ngOnInit() {
@@ -85,4 +89,3 @@ export class PrinterDialogComponent implements OnInit {
 		return this.newPrinter.locationID.length > 0
 	}
 }
-*/

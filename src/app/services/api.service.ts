@@ -1,13 +1,13 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {FAQ, Printer, Tutorial, Location} from "../../scripts/models";
 import {Observable} from "rxjs";
-import {CookieStore, FAQ, Location, Printer, Tutorial} from "../scripts/models";
-import {encode, format} from '../scripts/utils'
+import {encode, format} from "../../scripts/utils";
 
 @Injectable({
 	providedIn: 'root'
 })
-export class APIService implements PrinterAPI, LocationAPI, FAQAPI, TutorialAPI {
+export class APIService {
 	private readonly baseURI: string = 'http://localhost:3500/api';
 	private readonly auth: string;
 	private readonly headers: HttpHeaders;
@@ -90,95 +90,5 @@ export class APIService implements PrinterAPI, LocationAPI, FAQAPI, TutorialAPI 
 
 	getTutorials(): Observable<Tutorial[]> {
 		return this.http.get<Tutorial[]>(`${this.baseURI}/tutorials`, {headers: this.headers});
-	}
-}
-
-interface PrinterAPI {
-	getPrinters(): Observable<Printer[]>
-
-	getPrinter(id: string): Observable<Printer>
-
-	addPrinter(printer: Printer): Observable<boolean>
-
-	deletePrinter(id: string): Observable<boolean>
-
-	updatePrinter(printer: Printer, locationID: string): Observable<boolean>
-}
-
-interface LocationAPI {
-	getLocations(): Observable<Location[]>
-
-	getLocation(id: string): Observable<Location>
-
-	addLocation(location: Location): Observable<boolean>
-
-	updateLocation(location: Location): Observable<boolean>
-
-	deleteLocation(id: string): Observable<boolean>
-}
-
-interface FAQAPI {
-	getFAQs(): Observable<FAQ[]>;
-	getFAQ(id: string): Observable<FAQ>;
-	deleteFAQ(id: string): Observable<any>;
-}
-
-interface TutorialAPI {
-	getTutorials(): Observable<Tutorial[]>;
-	getTutorial(id: string): Observable<Tutorial>;
-	deleteTutorial(id: string): Observable<any>;
-}
-
-@Injectable({
-	providedIn: "root"
-})
-export class CookiesService {
-	private cookieStore: CookieStore = {};
-	private readonly days: number = 1
-
-	constructor() {
-		this.parseCookies()
-	}
-
-	private parseCookies(cookies: string = document.cookie) {
-		this.cookieStore = {}
-
-		if (!(!!cookies)) {
-			return;
-		}
-
-		let cookiesArr: any[] = cookies.split(';');
-		for (const cookie of cookiesArr) {
-			const cookieArr = cookie.split('=');
-			this.cookieStore[cookieArr[0].trim()] = cookieArr[1];
-		}
-
-		return
-	}
-
-	getCookie(key?: string) {
-		return (key ? (!!this.cookieStore[key] ? this.cookieStore[key] : null) : this.cookieStore);
-	}
-
-	setCookie(key: string, value: any) {
-		const date = new Date();
-
-		// Set it expire in a certain number of days
-		date.setTime(date.getTime() + (this.days * 24 * 60 * 60 * 1000));
-		document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
-
-		this.parseCookies();
-	}
-
-	deleteCookie(key: string) {
-		const date = new Date();
-
-		// Set it expire in -1 days
-		date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-
-		// Set it
-		document.cookie = `${key}=;expires=${date.toUTCString()};path=/`;
-
-		this.parseCookies()
 	}
 }

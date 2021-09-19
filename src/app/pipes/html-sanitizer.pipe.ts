@@ -1,7 +1,7 @@
+// Found this here: https://stackoverflow.com/questions/59874810/compile-a-dynamic-html-string-in-angular-8#59875876
 import {Pipe} from "@angular/core";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 
-// Found this here: https://stackoverflow.com/questions/59874810/compile-a-dynamic-html-string-in-angular-8#59875876
 @Pipe({
 	name: 'HTMLSanitizer'
 })

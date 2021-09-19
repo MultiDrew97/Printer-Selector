@@ -1,39 +1,25 @@
-import {
-	AfterContentInit,
-	Component,
-	EventEmitter,
-	HostListener,
-	Inject,
-	Input,
-	OnDestroy,
-	OnInit,
-	Output
-} from "@angular/core";
-import {FAQ, Image, Location, Printer, Tutorial} from "../scripts/models";
-import {SortColumn, SortOrder, Tabs} from "../scripts/enums";
+import {AfterContentInit, Component, HostListener, OnDestroy} from "@angular/core";
+import {SortColumn, SortOrder, Tabs} from "../../scripts/enums";
+import {LocationDataSource, PrinterDataSource} from "../../scripts/datasource";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ActivatedRoute, Router} from "@angular/router";
-import {openDialog, sort, toggleCollapse, toNumber} from "../scripts/utils";
-import {
-	AlertDialogComponent,
-	ConfirmDialogComponent,
-	EditLocationDialogComponent,
-	EditPrinterDialogComponent,
-	EmailDialogComponent,
-	LocationDialogComponent,
-	LoginDialogComponent,
-	PrinterDialogComponent
-} from "./dialogs";
-import {APIService} from "./services";
-import {Sort} from "@angular/material/sort";
-import {LocationDataSource, PrinterDataSource} from "../scripts/datasource";
-import {MatTabChangeEvent} from "@angular/material/tabs";
+import {ActivatedRoute} from "@angular/router";
 import {CookieService} from "ngx-cookie-service";
-
+import {openDialog, sort, toNumber} from "../../scripts/utils";
+import {Location, Printer} from "../../scripts/models";
+import {MatTabChangeEvent} from "@angular/material/tabs";
+import {Sort} from "@angular/material/sort";
+import {APIService} from "../services/api.service";
+import {AddPrinterDialogComponent} from "../dialogs/add-printer-dialog.component";
+import {AddLocationDialogComponent} from "../dialogs/add-location-dialog.component";
+import {EditPrinterDialogComponent} from "../dialogs/edit-printer-dialog.component";
+import {AlertDialogComponent} from "../dialogs/alert-dialog.component";
+import {LoginDialogComponent} from "../dialogs/login-dialog.component";
+import {ConfirmDialogComponent} from "../dialogs/confirm-dialog.component";
+import {EditLocationDialogComponent} from "../dialogs/edit-location-dialog.component";
 
 @Component({
-	templateUrl: '../views/admin.component.html',
-	styleUrls: ['../styles/admin.component.css']
+	templateUrl: '../../views/admin.component.html',
+	styleUrls: ['../../styles/admin.component.css']
 })
 export class AdminComponent implements AfterContentInit, OnDestroy {
 	title: string = 'Admin Portal'
@@ -42,7 +28,6 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	filterText: string = ''
 	pds!: PrinterDataSource;
 	lds!: LocationDataSource;
-	readonly s: Sort = {direction: 'asc', active: 'displayName'}
 
 	printerColumns = ['displayName', 'pathName']
 	locationColumns = ['displayName', 'ipAddress']
@@ -70,13 +55,13 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 		this.api.getPrinters().subscribe(data => {
 			this.pds = new PrinterDataSource(data)
 			this.pds.filterPredicate = (data, filter) => (data.displayName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1 || data.pathName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1)
-			this.sortPrinters(this.s)
+			this.sortPrinters({direction: 'asc', active: 'displayName'})
 		})
 
 		this.api.getLocations().subscribe(data => {
 			this.lds = new LocationDataSource(data)
 			this.lds.filterPredicate = (data, filter): boolean => data.displayName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1
-			this.sortLocations(this.s)
+			this.sortLocations({direction: 'asc', active: 'displayName'})
 		})
 
 		// TODO: Remove when I finally understand reload vs close
@@ -97,7 +82,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Create a new printer
 	 */
 	addPrinter() {
-		openDialog(this.dialog, this.config, PrinterDialogComponent).then((newPrinter: Printer) => {
+		openDialog(this.dialog, this.config, AddPrinterDialogComponent).then((newPrinter: Printer) => {
 			let retry: boolean = false
 
 			if (!newPrinter) {
@@ -122,7 +107,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Create a new location
 	 */
 	addLocation() {
-		openDialog(this.dialog, this.config, LocationDialogComponent).then((newLocation: Location) => {
+		openDialog(this.dialog, this.config, AddLocationDialogComponent).then((newLocation: Location) => {
 			console.debug(newLocation)
 
 			let retry: boolean = false
@@ -170,7 +155,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 		this.api.updateLocation(updatedLocation.location).subscribe(_ => {
 			this.api.getLocations().subscribe(data => {
 				this.lds.data = data
-				this.sortLocations(this.s)
+				this.sortLocations({direction: 'asc', active: 'displayName'})
 			})
 			alert('Location updated successfully')
 		}, error => {
@@ -211,7 +196,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 		this.api.updatePrinter(updatedPrinter.printer, updatedPrinter.locationID).subscribe(_ => {
 			this.api.getPrinters().subscribe(data => {
 				this.pds.data = data
-				this.sortPrinters(this.s)
+				this.sortPrinters({direction: 'asc', active: 'displayName'})
 			})
 			this.showAlert(`${printer.displayName} was updated successfully`)
 		}, error => {
@@ -344,290 +329,5 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 		let order = (s.direction === '' || s.direction === 'asc') ? SortOrder.NORMAL : SortOrder.REVERSED
 
 		this.lds.data = sort(this.lds.data, column, order) as Location[]
-	}
-}
-
-@Component({
-	templateUrl: '../views/add-printer.component.html',
-	styleUrls: ['../styles/add-printer.component.css']
-})
-export class AddPrintersComponent implements OnInit {
-	locations: Location[] = [];
-	selectedPrinters: Printer[] = [];
-	currentLocation: number = 0
-	config: MatDialogConfig
-	ipAddress: string = ''
-
-	constructor(private dialog: MatDialog, readonly api: APIService, private route: ActivatedRoute, @Inject('key') private readonly apiKey: string) {
-		this.config = new MatDialogConfig()
-		this.config.disableClose = false;
-		this.config.autoFocus = true;
-
-		// TODO: Use this to get the IP Address of the computer and use for auto selecting locations
-		/*checkIPAddress(apiKey).then(ip => {
-			console.debug(ip);
-		})*/
-	}
-
-	ngOnInit(): void {
-		for (const location of this.route.snapshot.data.locations) {
-			this.locations.push(location)
-		}
-	}
-
-	selectAll(location: Location) {
-		for (const printer of location.printers) {
-			printer.checked = true
-		}
-	}
-
-	deselectAll(location: Location) {
-		for (const printer of location.printers) {
-			printer.checked = false;
-		}
-	}
-
-	async clearSelection(fromHtml: boolean = false) {
-		if (fromHtml && !(await this.showConfirm('Are you sure you want to clear selections?'))) {
-			return
-		}
-
-		for (const location of this.locations) {
-			for (const printer of location.printers) {
-				printer.checked = false
-			}
-		}
-	}
-
-	async sendSelected() {
-		this.getPrinters();
-
-		if (this.selectedPrinters.length === 0) {
-			this.showAlert('You must select at least 1 printer.')
-		} else {
-			let {confirmedPrinters, printerPaths} = this.parseConfirms()
-
-			//let email: string = '';
-
-			let email: string = await this.getEmail()
-
-			console.debug(`Email: ${email || 'No Email Found'}`)
-
-			// TODO: Find how to clean this up and optimize this a little bit
-			if (email !== '') {
-				if (await this.showConfirm(`Is ${email} correct?`)) {
-					if (await this.showConfirm(`Is this the right selection?\n${confirmedPrinters}`)) {
-						// Send the printers list to the API to send the emails
-						this.api.sendEmail(email, printerPaths).subscribe((returned: { status: number }) => {
-							if (returned.status === 200) {
-								this.showAlert('The list of selected printers has been sent.')
-								this.clearSelection()
-							}
-						})
-					} else {
-						// Clear Selection
-						if (await this.showConfirm('Clear Selection?')) {
-							await this.clearSelection()
-						}
-					}
-				} else {
-					// Retry email address
-					if (await this.showConfirm('Would you like to retry?')) {
-						await this.sendSelected()
-					}
-				}
-			}
-		}
-	}
-
-	getPrinters() {
-		this.selectedPrinters = [] as Printer[]
-		for (const data of this.locations) {
-			for (const printer of data.printers) {
-				if (printer.checked) {
-					this.selectedPrinters.push(printer);
-				}
-			}
-		}
-	}
-
-	/*async openDialog(type: any): Promise<any> {
-		return this.dialog.open(type, this.config).afterClosed();
-	}*/
-
-	getEmail(): Promise<string> {
-		//let email: string = ''
-
-		return openDialog(this.dialog, this.config, EmailDialogComponent)
-
-		//return email
-	}
-
-	showConfirm(message: string): Promise<boolean> {
-		this.config.data = {
-			message: message
-		}
-
-		return openDialog(this.dialog, this.config, ConfirmDialogComponent)
-	}
-
-	showAlert(message: string): void {
-		this.config.data = {
-			message: message
-		}
-
-		openDialog(this.dialog, this.config, AlertDialogComponent)
-	}
-
-	parseConfirms(): { confirmedPrinters: string, printerPaths: string[] } {
-		let confirmedPrinters: string = ''
-		let printerPaths: string[] = [] as string[];
-
-		this.selectedPrinters.forEach((printer, index, array) => {
-			confirmedPrinters += (`${printer.displayName}`);
-			printerPaths.push(printer.pathName);
-
-			if (index < array.length - 1) {
-				confirmedPrinters += ', ';
-			}
-		})
-
-		return {
-			confirmedPrinters: confirmedPrinters,
-			printerPaths: printerPaths
-		}
-	}
-
-	tabChanged($event: MatTabChangeEvent) {
-		this.deselectAll(this.locations[$event.index])
-		this.currentLocation = $event.index
-	}
-
-	temp() {
-		console.debug(this.currentLocation)
-	}
-}
-
-@Component({
-	templateUrl: '../views/main.component.html',
-	styleUrls: ['../styles/main.component.css']
-})
-export class MainComponent {
-	department: string = 'AGIT';
-	header: string = 'Printer Installation';
-	subheader: string = `Welcome to the ${this.department} ${this.header} Site.`;
-}
-
-@Component({
-	selector: 'app-root',
-	templateUrl: '../views/app.component.html',
-	styleUrls: ['../styles/app.component.css']
-})
-export class AppComponent {
-	department: string = 'AGIT'
-}
-
-@Component({
-	templateUrl: '../views/help.component.html',
-	styleUrls: ['../styles/help.component.css']
-})
-export class HelpComponent {
-	header: string = "AGIT's Printer Help";
-	subheader: string = "If you have any issues getting your printer(s) installed, refer to below";
-	readonly base: string = '/help'
-
-	toggle = toggleCollapse
-
-	tutorials: Tutorial[] = [];
-	faqs: FAQ[] = [];
-
-	constructor(readonly api: APIService, readonly route: ActivatedRoute) {
-		/*for (const tutorial of this.tutorials) {
-			console.debug(tutorial)
-		}*/
-
-		for (const tutorial of this.route.snapshot.data.tutorials) {
-			this.tutorials.push(tutorial)
-		}
-
-		for (const faq of this.route.snapshot.data.faqs) {
-			this.faqs.push(faq)
-		}
-	}
-}
-
-@Component({
-	selector: 'tutorials',
-	templateUrl: '../views/tutorial.component.html',
-	styleUrls: ['../styles/tutorial.component.css']
-})
-export class TutorialComponent {
-	@Input()
-	tutorials: Tutorial[] = [];
-
-	@Input()
-	base: string = '';
-
-	@Input()
-	imgs: Image[] = []
-
-	@Output()
-	toggleCollapse = new EventEmitter<EventTarget | null>()
-
-	toggle(target: EventTarget | null) {
-		// TODO: Figure out how to collapse an already open collapsible without hindering operations
-		this.toggleCollapse.emit(target)
-	}
-}
-
-@Component({
-	selector: 'faqs',
-	templateUrl: '../views/faq.component.html',
-	styleUrls: ['../styles/faq.component.css']
-})
-export class FAQComponent {
-	@Input()
-	faqs: FAQ[] = [];
-
-	@Input()
-	base: string = '';
-
-	@Input()
-	imgs: Image[] = []
-
-	@Output()
-	toggleCollapse = new EventEmitter<EventTarget | null>()
-
-	toggled = false;
-
-	toggle(target: EventTarget | null) {
-		// TODO: Figure out how to collapse an already open collapsible without hindering operations
-		this.toggleCollapse.emit(target)
-	}
-}
-
-@Component({
-	selector: 'nav-root',
-	templateUrl: '../views/nav.component.html'
-})
-export class NavComponent {
-	links = [{
-		link: '/home',
-		text: 'Home'
-	},
-		{
-			link: '/printers',
-			text: 'Add Printers'
-		},
-		{
-			link: '/help',
-			text: 'Help'
-		},
-		{
-			link: '/admin',
-			text: 'Admin Portal'
-		}]
-
-	constructor(private readonly _: Router) {
 	}
 }

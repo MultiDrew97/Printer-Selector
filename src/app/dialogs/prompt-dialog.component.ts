@@ -1,4 +1,3 @@
-/*
 import {Component, Inject, OnInit} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
@@ -8,6 +7,11 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 export class PromptDialogComponent implements OnInit {
 	reject: string = 'Cancel'
 	confirm: string = 'Ok'
+
+	prompts = {
+		confirm: 'Ok',
+		reject: 'Cancel'
+	}
 	value: string = ''
 	message: string = '';
 
@@ -26,4 +30,3 @@ export class PromptDialogComponent implements OnInit {
 		this.dialogRef.close()
 	}
 }
-*/

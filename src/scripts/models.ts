@@ -6,6 +6,7 @@ export interface Data extends dbEntry {
 }
 
 export interface Location extends Data {
+	ipAddress: string;
 	printers: Printer[];
 }
 

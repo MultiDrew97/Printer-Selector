@@ -1,7 +1,7 @@
 <mat-dialog-content>
-	<p class="message">{{ message }}</p>
-	<mat-dialog-actions>
-		<button mat-button (click)="close(false)">{{ decline }}</button>
-		<button mat-button (click)="close(true)">{{ accept }}</button>
-	</mat-dialog-actions>
+	<p class="message" [innerHTML]="message | HTMLSanitizer"></p>
 </mat-dialog-content>
+<mat-dialog-actions id="action-buttons">
+	<button mat-button (click)="close(false)">{{ decline }}</button>
+	<button mat-button (click)="close(true)" type="submit">{{ accept }}</button>
+</mat-dialog-actions>

@@ -1,4 +1,3 @@
-/*
 import {Component} from "@angular/core";
 
 @Component({
@@ -7,6 +6,5 @@ import {Component} from "@angular/core";
 	styleUrls: ['../../styles/app.component.css']
 })
 export class AppComponent {
-
+	department: string = 'AGIT'
 }
-*/

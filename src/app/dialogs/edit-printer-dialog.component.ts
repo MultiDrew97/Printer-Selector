@@ -1,7 +1,8 @@
-/*
 import {Component, Inject, OnInit} from "@angular/core";
-import {Printer, Location} from "../../scripts/models";
+import {Printer} from "../../scripts/models";
+import {LocationDataSource} from "../../scripts/datasource";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {APIService} from "../services/api.service";
 
 @Component({
 	templateUrl: '../../views/edit-printer.component.html',
@@ -9,17 +10,18 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 })
 export class EditPrinterDialogComponent implements OnInit {
 	printer: Printer;
-	locations: Location[]
 	printerName: string = '';
 	pathName: string = '';
 	locationID: string = '';
 	oldLocation: string = '';
+	lds!: LocationDataSource;
 
 	valid: boolean = true
 
 	buttons = {
 		close: 'Cancel',
-		finished: 'Update'
+		finished: 'Update',
+		delete: 'Remove'
 	}
 
 	prompts = {
@@ -29,18 +31,29 @@ export class EditPrinterDialogComponent implements OnInit {
 		locations: 'Printer Location:'
 	}
 	constructor(private dialogRef: MatDialogRef<any>,
-				@Inject(MAT_DIALOG_DATA) readonly data: any) {
+				@Inject(MAT_DIALOG_DATA) readonly data: any,
+				private readonly api: APIService) {
 		this.printer = this.data.printer
-		this.locations = this.data.locations
+
+		api.getLocations().subscribe(locations => {
+			this.lds = new LocationDataSource(locations)
+			this.getLocationID()
+		})
 	}
 
 	ngOnInit() {
 		this.printerName = this.printer.displayName
 		this.pathName = this.printer.pathName
 
-		setTimeout(() => {
+		/*setTimeout(() => {
 			this.getLocationID()
-		}, 1)
+		}, 1)*/
+	}
+
+	delete() {
+		this.dialogRef.close({
+			delete: true
+		})
 	}
 
 	close() {
@@ -49,13 +62,17 @@ export class EditPrinterDialogComponent implements OnInit {
 
 	finished() {
 		if(this.valid) {
+
+			this.printer.displayName = this.printer.displayName !== this.printerName ? this.printerName : this.printer.displayName;
+			this.printer.pathName = this.printer.pathName !== this.pathName ? this.pathName : this.printer.pathName;
+
 			let updated = {
 				printer: this.printer,
 				locationID: this.locationID
 			}
 
 			this.dialogRef.close(updated)
-			/!*this.printer.displayName = this.printerName
+			/*this.printer.displayName = this.printerName
 			this.printer.pathName = this.pathName
 			if(this.locationID !== this.oldLocation) {
 				let updated = {
@@ -65,7 +82,7 @@ export class EditPrinterDialogComponent implements OnInit {
 				this.dialogRef.close(updated)
 			} else {
 				this.dialogRef.close(this.printer)
-			}*!/
+			}*/
 		}
 	}
 
@@ -94,7 +111,7 @@ export class EditPrinterDialogComponent implements OnInit {
 	}
 
 	getLocationID(): void {
-		for (const location of this.locations) {
+		for (const location of this.lds.data) {
 			if (location.printers.some(printer => printer._id === this.printer._id)) {
 				this.locationID = location._id;
 				this.oldLocation = this.locationID;
@@ -107,4 +124,3 @@ export class EditPrinterDialogComponent implements OnInit {
 		// return ''
 	}
 }
-*/

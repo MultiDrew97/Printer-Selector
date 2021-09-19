@@ -1,22 +1,18 @@
-/*
-import {Inject, Injectable} from "@angular/core";
+import {Injectable} from "@angular/core";
+import {CookieStore} from "../../scripts/models";
 
 @Injectable({
 	providedIn: "root"
 })
 export class CookiesService {
-	cookieStore = {};
-	readonly days: number = 1
+	private cookieStore: CookieStore = {};
+	private readonly days: number = 1
 
-	constructor(@Inject('req') private readonly req: any) {
-		if (this.req !== null) {
-			this.parseCookies(this.req.cookies);
-		} else {
-			this.parseCookies(document.cookie);
-		}
+	constructor() {
+		this.parseCookies()
 	}
 
-	public parseCookies(cookies: any) {
+	private parseCookies(cookies: string = document.cookie) {
 		this.cookieStore = {}
 
 		if (!(!!cookies)) {
@@ -26,27 +22,27 @@ export class CookiesService {
 		let cookiesArr: any[] = cookies.split(';');
 		for (const cookie of cookiesArr) {
 			const cookieArr = cookie.split('=');
-			// @ts-ignore
-			this.cookieStore[cookieArr[0]] = cookieArr[1];
+			this.cookieStore[cookieArr[0].trim()] = cookieArr[1];
 		}
 
 		return
 	}
 
-	get(key?: string) {
-		// @ts-ignore
-		return (key ? (!!this.cookieStore[key] ? this.cookieStore[key] : null) :  this.cookieStore) ;
+	getCookie(key?: string) {
+		return (key ? (!!this.cookieStore[key] ? this.cookieStore[key] : null) : this.cookieStore);
 	}
 
-	set(key: string, value: any) {
+	setCookie(key: string, value: any) {
 		const date = new Date();
 
 		// Set it expire in a certain number of days
 		date.setTime(date.getTime() + (this.days * 24 * 60 * 60 * 1000));
 		document.cookie = `${key}=${value};expires=${date.toUTCString()};path=/`;
+
+		this.parseCookies();
 	}
 
-	delete(key: string) {
+	deleteCookie(key: string) {
 		const date = new Date();
 
 		// Set it expire in -1 days
@@ -54,6 +50,7 @@ export class CookiesService {
 
 		// Set it
 		document.cookie = `${key}=;expires=${date.toUTCString()};path=/`;
+
+		this.parseCookies()
 	}
 }
-*/
