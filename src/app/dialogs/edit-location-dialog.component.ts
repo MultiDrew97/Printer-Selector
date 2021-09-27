@@ -9,9 +9,9 @@ import {APIService} from "../services/api.service";
 	styleUrls: ['../../styles/edit-location.component.css']
 })
 export class EditLocationDialogComponent implements AfterViewInit {
-	location: Location;
-	locationName: string;
-	ipAddress: string;
+	location!: Location;
+	locationName!: string;
+	ipAddress!: string;
 	changed: boolean = false;
 	pds!: PrinterDataSource;
 	newPrinters: string[] = [];
@@ -33,9 +33,12 @@ export class EditLocationDialogComponent implements AfterViewInit {
 	constructor(private dialogRef: MatDialogRef<any>,
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
-		this.location = this.data.location;
-		this.locationName = this.data.location.displayName;
-		this.ipAddress = this.data.location.ipAddress;
+
+		api.getLocation(data.id).subscribe(location => {
+			this.location = location;
+			this.locationName = location.displayName;
+			this.ipAddress = location.ipAddress;
+		})
 
 		api.getPrinters().subscribe(printers => {
 			this.pds = new PrinterDataSource(printers)

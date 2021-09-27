@@ -110,6 +110,16 @@ tutorials, faqs {
 	font: 1.2rem normal;
 }
 
+.input-pair {
+	display: inline-grid;
+	padding: 5%;
+	margin: 1%;
+}
+
+.dialog-form {
+	width: 100%;
+}
+
 /* Collapsible Based Styles */
 .collapsible {
 	background-color: #777;

@@ -57,17 +57,12 @@
 	margin-left: 5%;
 }
 
-/*::ng-deep .mat-tab-body-content {
-	background-color: #f1f1f1;
-	border: 3px black solid;
-	border-top: hidden;
-	box-sizing: border-box;
+#selection-container {
+	max-width: 35%;
+	min-width: 20%;
+	width: auto;
 }
 
-::ng-deep mat-tab-header {
-	border: 3px dimgrey solid;
-}*/
-
-/*::ng-deep .collapsible-container {
-	max-width: 100%;
-}*/
+#action-buttons {
+	margin-top: 5%;
+}
