@@ -8,24 +8,23 @@ import {encode, format} from "../../scripts/utils";
 	providedIn: 'root'
 })
 export class APIService {
-	private readonly baseURI: string = 'http://localhost:3500/api';
-	private readonly auth: string;
+	//private readonly baseURI: string = 'http://localhost:3500/api';
+	private readonly baseURI: string = 'http://ad-its:3500/api';
 	private readonly headers: HttpHeaders;
 
 	constructor(
 		@Inject('creds') readonly creds: { user: string, pass: string },
 		private readonly http: HttpClient
 	) {
-		this.auth = encode(format('{0}:{1}', this.creds.user, this.creds.pass));
 		this.headers = new HttpHeaders({
 			withCredentials: 'true',
-			Authorization: `Basic ${this.auth}`,
+			Authorization: `Basic ${encode(format('{0}:{1}', this.creds.user, this.creds.pass))}`,
 			Accept: 'application/json, plain/text'
 		});
 	}
 
 	getPrinters(): Observable<Printer[]> {
-		return this.http.get<Printer[]>(`${this.baseURI}/printers`, {headers: this.headers}).pipe()
+		return this.http.get<Printer[]>(`${this.baseURI}/printers`, {headers: this.headers})
 	}
 
 	getPrinter(id: string): Observable<Printer> {
