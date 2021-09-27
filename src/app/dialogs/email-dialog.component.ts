@@ -1,25 +1,25 @@
 import {Component, Inject} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {email} from "../../scripts/regex";
 
 @Component({
 	templateUrl: '../../views/email.component.html',
 	styleUrls: ['../../styles/email.component.css']
 })
 export class EmailDialogComponent {
-	email: string = '';
+	emailAddress: string = '';
 	valid: boolean = false;
-	emailPattern: RegExp = /[a-zA-Z0-9]\.*[a-zA-Z0-9]+@austingastro\.com/i;
 
 	constructor(private dialogRef: MatDialogRef<EmailDialogComponent>,
 				@Inject(MAT_DIALOG_DATA) data: any) {
 	}
 
 	verifyEmail() {
-		this.valid = this.emailPattern.test(this.email)
+		this.valid = email.test(this.emailAddress)
 	}
 
 	finished() {
-		this.dialogRef.close(this.email);
+		this.dialogRef.close(this.emailAddress);
 	}
 
 	cancel() {

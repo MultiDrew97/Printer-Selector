@@ -1,7 +1,7 @@
 import {HostListener, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {MatDialogConfig, MatDialogModule} from "@angular/material/dialog";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {HttpClientModule} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -37,6 +37,7 @@ import {AlertDialogComponent} from "./dialogs/alert-dialog.component";
 import {AddPrinterDialogComponent} from "./dialogs/add-printer-dialog.component";
 import {AddLocationDialogComponent} from "./dialogs/add-location-dialog.component";
 import {EditLocationDialogComponent} from "./dialogs/edit-location-dialog.component";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
 	declarations: [
@@ -75,7 +76,9 @@ import {EditLocationDialogComponent} from "./dialogs/edit-location-dialog.compon
 		MatListModule,
 		CdkTableModule,
 		MatTableModule,
-		MatTabsModule
+		MatTabsModule,
+		MatInputModule,
+		ReactiveFormsModule
 	],
 	providers: [
 		APIService,
@@ -109,6 +112,11 @@ export class AppModule {
 	}
 
 	@HostListener('beforeunload', [])
+	cleanUpCheck() {
+		return "Are you sure?"
+	}
+
+	@HostListener('unload', [])
 	cleanUp() {
 		console.debug('Clean up')
 		this.cookies.deleteAll()

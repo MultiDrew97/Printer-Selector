@@ -2,7 +2,7 @@
 	<h2>Email Address</h2>
 	<p>What email address are we sending this to?</p>
 
-	<input id="email" type="email" placeholder="Email Address" [(ngModel)]="email" (ngModelChange)="verifyEmail()">
+	<input id="email" type="email" placeholder="Email Address" [(ngModel)]="emailAddress" (ngModelChange)="verifyEmail()">
 </mat-dialog-content>
 <mat-dialog-actions id="action-buttons">
 	<button mat-button class="action-button" (click)="cancel()">Cancel</button>
