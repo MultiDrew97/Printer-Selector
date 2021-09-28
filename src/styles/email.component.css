@@ -2,5 +2,8 @@
 	width: auto;
 	min-width: 90%;
 	max-width: 100%;
-	margin-left: 4%;
+}
+
+#email-header {
+	padding-bottom: 5%;
 }

@@ -38,6 +38,7 @@ import {AddPrinterDialogComponent} from "./dialogs/add-printer-dialog.component"
 import {AddLocationDialogComponent} from "./dialogs/add-location-dialog.component";
 import {EditLocationDialogComponent} from "./dialogs/edit-location-dialog.component";
 import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
 	declarations: [
@@ -78,7 +79,8 @@ import {MatInputModule} from "@angular/material/input";
 		MatTableModule,
 		MatTabsModule,
 		MatInputModule,
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		MatIconModule
 	],
 	providers: [
 		APIService,

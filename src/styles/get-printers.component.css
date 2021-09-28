@@ -39,7 +39,8 @@
 
 .printer {
 	float: left;
-	width: 33.3%;
+	width: auto;
+	min-width: 33.3%;
 	padding: 2% 0;
 	box-sizing: border-box;
 }
@@ -65,4 +66,9 @@
 
 #action-buttons {
 	margin-top: 5%;
+	margin-bottom: 5%;
+}
+
+.selection-buttons .location-selection {
+	margin: 1% 3%;
 }
