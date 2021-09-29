@@ -6,21 +6,21 @@
 	<div id="selection-container">
 		<!-- TODO: Figure out how to link this dropdown to the tabs correctly -->
 		<mat-select id="location-selection" [(ngModel)]="currentLocation">
-			<mat-option *ngFor="let location of locations; let i = index" [value]="i">{{ location.displayName }}</mat-option>
+			<mat-option *ngFor="let location of route.snapshot.data.locations; let i = index" [value]="i">{{ location.displayName }}</mat-option>
 		</mat-select>
+		<br />
+		<div class='selection-buttons'>
+			<button mat-raised-button class='location-selection deselect' (click)='deselectAll(currentLocation)'>Unselect All</button>
+			<button mat-raised-button class='location-selection select' (click)='selectAll(currentLocation)'>Select All</button>
+		</div>
 	</div>
 
 	<br/>
 
-	<div>
+	<div id="location-tabs">
 		<mat-tab-group id="locations" [(selectedIndex)]="currentLocation" (selectedTabChange)="tabChanged($event)">
-			<mat-tab [id]="location._id" *ngFor="let location of locations; let i = index"
+			<mat-tab [id]="location._id" *ngFor="let location of route.snapshot.data.locations; let i = index"
 					 [label]="location.displayName" [tabIndex]="i" class="location-tab">
-				<div class='selection-buttons'>
-					<button mat-raised-button class='location-selection deselect' (click)='deselectAll(location)'>Unselect All</button>
-					<button mat-raised-button class='location-selection select' (click)='selectAll(location)'>Select All</button>
-				</div>
-				<br/>
 				<div class='printers'>
 					<mat-checkbox class='printer' [(ngModel)]="printer.checked"
 								  *ngFor='let printer of location.printers'>{{ printer.displayName }}</mat-checkbox>

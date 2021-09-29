@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from "@angular/core";
-import {Location, Printer} from "../../scripts/models";
+import {Printer} from "../../scripts/models";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ActivatedRoute} from "@angular/router";
 import {openDialog} from "../../scripts/utils";
@@ -14,18 +14,16 @@ import {EmailDialogComponent} from "../dialogs/email-dialog.component";
 	styleUrls: ['../../styles/get-printers.component.css']
 })
 export class GetPrintersComponent implements OnInit {
-	locations: Location[] = [];
 	selectedPrinters: Printer[] = [];
-	currentLocation: number = 0
-	config: MatDialogConfig
-	ipAddress: string = ''
+	currentLocation: number = 0;
+	config: MatDialogConfig;
 
-	constructor(private dialog: MatDialog, readonly api: APIService, private route: ActivatedRoute, @Inject('key') private readonly apiKey: string) {
+	constructor(private dialog: MatDialog, readonly api: APIService, readonly route: ActivatedRoute, @Inject('key') private readonly apiKey: string) {
 		this.config = new MatDialogConfig()
 		this.config.disableClose = false;
 		this.config.autoFocus = true;
 
-		this.locations = this.route.snapshot.data.locations
+		//this.locations = this.route.snapshot.data.locations
 	}
 
 	ngOnInit(): void {
@@ -34,23 +32,26 @@ export class GetPrintersComponent implements OnInit {
 			this.determineTab(ip);
 		})*/
 
-		this.determineTab('209.202.232.142');
+		this.determineTab('209.170.229.86');
 	}
 
-	selectAll(location: Location) {
-		for (const printer of location.printers) {
+	selectAll(index: number) {
+		for (const printer of this.route.snapshot.data.locations[index].printers) {
 			printer.checked = true
 		}
 	}
 
-	deselectAll(location: Location) {
-		for (const printer of location.printers) {
+	deselectAll(index: number) {
+		for (const printer of this.route.snapshot.data.locations[index].printers) {
 			printer.checked = false;
 		}
 	}
 
 	determineTab(ipAddress: string) {
-		for (const [index, location] of this.locations.entries()) {
+		let count = 0;
+		// TODO: Make a popup window to pick between the locations with shared WAN IP addresses?
+		for (const [index, location] of this.route.snapshot.data.locations.entries()) {
+			count += ipAddress === location.ipAddress ? 1 : 0;
 			if (ipAddress === location.ipAddress) {
 				// Use the location to set active tab
 				this.currentLocation = index;
@@ -64,7 +65,7 @@ export class GetPrintersComponent implements OnInit {
 			return
 		}
 
-		for (const location of this.locations) {
+		for (const location of this.route.snapshot.data.locations) {
 			for (const printer of location.printers) {
 				printer.checked = false
 			}
@@ -121,7 +122,7 @@ export class GetPrintersComponent implements OnInit {
 
 	getPrinters() {
 		this.selectedPrinters = [] as Printer[]
-		for (const data of this.locations) {
+		for (const data of this.route.snapshot.data.locations) {
 			for (const printer of data.printers) {
 				if (printer.checked) {
 					this.selectedPrinters.push(printer);
@@ -161,7 +162,7 @@ export class GetPrintersComponent implements OnInit {
 			message: message
 		}
 
-		openDialog(this.dialog, this.config, AlertDialogComponent)
+		openDialog(this.dialog, this.config, AlertDialogComponent).then()
 	}
 
 	parseConfirms(): { confirmedPrinters: string, printerPaths: string[] } {
@@ -184,7 +185,7 @@ export class GetPrintersComponent implements OnInit {
 	}
 
 	tabChanged($event: MatTabChangeEvent) {
-		this.deselectAll(this.locations[$event.index])
+		this.deselectAll($event.index)
 		this.currentLocation = $event.index
 	}
 }

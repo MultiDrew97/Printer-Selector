@@ -23,6 +23,23 @@ a.route-link {
 	text-align: center;
 }
 
+#bottom p {
+	padding: 1%;
+	box-sizing: border-box;
+	text-decoration: none;
+	color: #c0c0c0;
+	text-align: center;
+}
+
+#bottom p a {
+	text-decoration: none;
+	color: lightblue;
+}
+
+#bottom p a:hover {
+	color: deepskyblue;
+}
+
 .main {
 	margin-top: 10%;
 	text-align: center;
