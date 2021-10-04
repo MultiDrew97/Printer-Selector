@@ -245,6 +245,8 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Show the login prompt
 	 */
 	showLogin() {
+		this.config.minWidth = '25vw';
+		this.config.maxWidth = '30vw';
 		openDialog(this.dialog, this.config, LoginDialogComponent).then((loggedIn: boolean) => {
 			this.authorized = loggedIn
 			let date = new Date();
@@ -271,7 +273,6 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Check to see if the user is authorized to use the admin portal
 	 */
 	checkAuth(): boolean {
-		console.debug(this.authorized)
 		if (this.cookie.get('authorized') !== 'true') {
 			this.showLogin()
 			return false
@@ -293,7 +294,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	}
 
 	/**
-	 * Perform some clean up on the page, removing cookies and performing unsubscriptions
+	 * Perform some clean up on the page, removing cookies and unsubscribe
 	 */
 	@HostListener('window:beforeunload', ['$event'])
 	cleanUp(_: BeforeUnloadEvent) {
