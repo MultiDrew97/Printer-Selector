@@ -18,7 +18,7 @@ export class APIService {
 	) {
 		this.headers = new HttpHeaders({
 			withCredentials: 'true',
-			Authorization: `Basic ${encode(format('{0}:{1}', this.creds.user, this.creds.pass))}`,
+			Authorization: `Basic ${encode(`${this.creds.user}:${this.creds.pass}`)}`,
 			Accept: 'application/json, plain/text'
 		});
 	}

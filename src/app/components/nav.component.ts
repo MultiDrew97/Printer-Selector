@@ -17,11 +17,11 @@ export class NavComponent {
 		{
 			link: '/help',
 			text: 'Help'
-		},
+		}/*,
 		{
 			link: '/admin',
 			text: 'Admin Portal'
-		}]
+		}*/]
 
 	constructor(private readonly _: Router) {
 	}

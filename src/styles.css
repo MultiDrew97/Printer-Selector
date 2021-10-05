@@ -23,6 +23,19 @@ a.route-link {
 	text-align: center;
 }
 
+#bottom {
+	color: #c0c0c0
+}
+
+#bottom a {
+	color: lightblue;
+	text-decoration: none;
+}
+
+#bottom a:hover {
+	color: lightskyblue;
+}
+
 .main {
 	margin-top: 10%;
 	text-align: center;

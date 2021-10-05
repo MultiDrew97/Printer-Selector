@@ -6,6 +6,20 @@
 	margin: 0
 }
 
+#construction {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	border: black 2px dot-dot-dash;
+}
+
+#construction-images {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
 /*
 Good known background color for collapsible-content with white background
 ::ng-deep .collapsible-content {

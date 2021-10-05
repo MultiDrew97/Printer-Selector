@@ -1,30 +1,48 @@
-<div id="top">
-	<h1>{{ header }}</h1>
-	<h3>{{ subheader }}</h3>
+<div hidden>
+	<div id="top">
+		<h1>{{ header }}</h1>
+		<h3>{{ subheader }}</h3>
+	</div>
+
+	<nav id="table-contents">
+		<h3><a href="{{base}}#tutorials">All Tutorials</a></h3>
+		<ul>
+			<li *ngFor="let tutorial of tutorials"><a href="{{base}}#{{tutorial.linkID}}">{{ tutorial.title }}</a></li>
+		</ul>
+
+		<h3><a href="{{base}}#faqs">FAQs</a></h3>
+		<ul>
+			<li *ngFor="let faq of faqs"><a href="{{base}}#{{faq.linkID}}">{{ faq.question }}</a></li>
+		</ul>
+	</nav>
+
+	<div id="tutorials" class="help-container">
+		<h1>Tutorials</h1>
+		<tutorials [tutorials]="tutorials" [base]="base" (toggleCollapse)="toggle($event)"></tutorials>
+	</div>
+
+	<div id="faqs" class="help-container">
+		<h1>FAQs</h1>
+		<faqs [faqs]="faqs" [base]="base" (toggleCollapse)="toggle($event)"></faqs>
+	</div>
+
+	<div id="images">
+
+	</div>
 </div>
 
-<nav id="table-contents">
-	<h3><a href="{{base}}#tutorials">All Tutorials</a></h3>
-	<ul>
-		<li *ngFor="let tutorial of tutorials"><a href="{{base}}#{{tutorial.linkID}}">{{ tutorial.title }}</a></li>
-	</ul>
 
-	<h3><a href="{{base}}#faqs">FAQs</a></h3>
-	<ul>
-		<li *ngFor="let faq of faqs"><a href="{{base}}#{{faq.linkID}}">{{ faq.question }}</a></li>
-	</ul>
-</nav>
+<div id="construction">
+	<header>
+		<h1>Under Construction</h1>
+		<p>Apologies for the inconvenience, however this page is currently not ready yet</p>
+	</header>
+	<footer>
+		<p>If you are having issues, feel free to email us at <a href="mailto:agit@austingastro.com?subject=Issues%20With%20Printers">AGIT@austingastro.com</a></p>
+	</footer>
 
-<div id="tutorials" class="help-container">
-	<h1>Tutorials</h1>
-	<tutorials [tutorials]="tutorials" [base]="base" (toggleCollapse)="toggle($event)"></tutorials>
-</div>
-
-<div id="faqs" class="help-container">
-	<h1>FAQs</h1>
-	<faqs [faqs]="faqs" [base]="base" (toggleCollapse)="toggle($event)"></faqs>
-</div>
-
-<div id="images">
-
+	<div id="construction-images">
+		<img src="assets/imgs/construction.png" alt="morning construction" />
+		<img src="assets/imgs/construction%202.png" alt="under construction" />
+	</div>
 </div>
