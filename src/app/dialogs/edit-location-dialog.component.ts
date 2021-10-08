@@ -3,19 +3,25 @@ import {Location, Printer} from "../../scripts/models";
 import {PrinterDataSource} from "../../scripts/datasource";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {APIService} from "../services/api.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ip} from "../../scripts/regex";
 
 @Component({
 	templateUrl: '../../views/edit-location.component.html',
 	styleUrls: ['../../styles/edit-location.component.css']
 })
 export class EditLocationDialogComponent implements AfterViewInit {
-	location: Location;
-	locationName: string;
-	ipAddress: string;
+	location!: Location;
+	locationName!: string;
+	ipAddress!: string;
 	changed: boolean = false;
 	pds!: PrinterDataSource;
 	newPrinters: string[] = [];
-	valid: boolean = true;
+	valid: boolean = false;
+	editForm = new FormGroup({
+		name: new FormControl('', [Validators.required]),
+		ip: new FormControl('', [Validators.required, Validators.pattern(ip)])
+	})
 
 	buttons = {
 		close: 'Cancel',
@@ -33,21 +39,32 @@ export class EditLocationDialogComponent implements AfterViewInit {
 	constructor(private dialogRef: MatDialogRef<any>,
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
-		this.location = this.data.location;
-		this.locationName = this.data.location.displayName;
-		this.ipAddress = this.data.location.ipAddress;
 
-		api.getPrinters().subscribe(printers => {
-			this.pds = new PrinterDataSource(printers)
+		this.load(data.id).then(_ => {
 			this.getCurrentPrinters()
+		}, reason => {
+			console.debug(reason)
 		})
 	}
 
 	ngAfterViewInit() {
-		// this.getPrinters()
-		/*setTimeout(() => {
-			this.getPrinters();
-		}, 1)*/
+
+	}
+
+	async load(id: string) {
+		await this.loadLocation(id)
+		await this.loadPrinters()
+	}
+
+	async loadLocation(id: string) {
+		this.location = await this.api.getLocation(id).toPromise()
+		this.locationName = this.location.displayName;
+		this.ipAddress = this.location.ipAddress
+	}
+
+	async loadPrinters() {
+		let printers = await this.api.getPrinters().toPromise()
+		this.pds = new PrinterDataSource(printers)
 	}
 
 	getCurrentPrinters() {
@@ -82,7 +99,12 @@ export class EditLocationDialogComponent implements AfterViewInit {
 	}
 
 	finished() {
-		if (this.valid && this.changed) {
+		if (!this.changed) {
+			this.close()
+			return
+		}
+
+		if (this.valid) {
 			this.dialogRef.close({
 				location: {
 					_id: this.location._id,
@@ -91,25 +113,15 @@ export class EditLocationDialogComponent implements AfterViewInit {
 					printers: this.getPrinters()
 				}
 			})
-		} else {
-			this.close();
 		}
 	}
 
 	validate() {
-		let validName: boolean = this.validateName();
-		this.changed = true;
-
-		if(!validName) {
-			// location name error message
-		} else {
-			// valid name
-		}
-
-		this.valid = validName;
+		console.debug(this.editForm.errors);
+		this.valid = false
 	}
 
-	validateName(): boolean {
-		return this.locationName.length > 0 && !/^\s+$/i.test(this.locationName)
+	validateIP() {
+		this.validate()
 	}
 }

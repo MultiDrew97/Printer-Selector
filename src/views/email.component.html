@@ -1,8 +1,16 @@
-<mat-dialog-content>
+<header id="email-header">
 	<h2>Email Address</h2>
 	<p>What email address are we sending this to?</p>
-
-	<input id="email" type="email" placeholder="Email Address" [(ngModel)]="email" (ngModelChange)="verifyEmail()">
+</header>
+<mat-dialog-content>
+	<form id="email" [formGroup]="emailForm">
+		<mat-form-field floatLabel="auto" hintLabel="Must be an AustinGastro.com address">
+			<mat-label>Email Address:</mat-label>
+			<input matInput formControlName="emailControl" type="email" required [(ngModel)]="emailAddress"
+				   (ngModelChange)="verifyEmail()">
+			<mat-error>You must use an AustinGastro.com email address</mat-error>
+		</mat-form-field>
+	</form>
 </mat-dialog-content>
 <mat-dialog-actions id="action-buttons">
 	<button mat-button class="action-button" (click)="cancel()">Cancel</button>

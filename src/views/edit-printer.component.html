@@ -1,41 +1,38 @@
-<div id="container">
-	<mat-dialog-content id="content">
-		<h1>Edit Printer</h1>
 
-		<header id="edit-header">
-			<h3>{{ printer.displayName }}</h3>
+<h1>Edit Printer</h1>
 
-			<br/>
+<header id="edit-header">
+	<h3>{{ printer.displayName }}</h3>
 
-			<button mat-button (click)="delete()" id="remove-printer">{{ buttons.delete }}</button>
-		</header>
+	<button mat-button (click)="delete()" id="remove-printer">{{ buttons.delete }}</button>
+</header>
+<hr />
+<mat-dialog-content id="content">
+	<form id="edit-form" class="dialog-form" (submit)="finished()" (change)="validate()">
+		<fieldset class="input-pair">
+			<label for="printerID">{{ prompts.printerID }}</label>
+			<input name="printerID" id="printerID" type="text" readonly [ngModel]="printer._id" />
+		</fieldset>
 
-		<form id="edit-form" (submit)="finished()" (change)="validate()">
-			<fieldset class="input-pair">
-				<label for="printerID">{{ prompts.printerID }}</label>
-				<input name="printerID" id="printerID" type="text" readonly [ngModel]="printer._id" />
-			</fieldset>
+		<fieldset class="input-pair">
+			<label for="printerName">{{ prompts.printerName }}</label>
+			<input name="printerName" id="printerName" type="text" [(ngModel)]="printerName" (ngModelChange)="validate()"/>
+		</fieldset>
 
-			<fieldset class="input-pair">
-				<label for="printerName">{{ prompts.printerName }}</label>
-				<input name="printerName" id="printerName" type="text" [(ngModel)]="printerName" (ngModelChange)="validate()"/>
-			</fieldset>
+		<fieldset class="input-pair">
+			<label for="pathName">{{ prompts.pathName }}</label>
+			<input name="pathName" id="pathName" type="text" [(ngModel)]="pathName" (ngModelChange)="validate()"/>
+		</fieldset>
 
-			<fieldset class="input-pair">
-				<label for="pathName">{{ prompts.pathName }}</label>
-				<input name="pathName" id="pathName" type="text" [(ngModel)]="pathName" (ngModelChange)="validate()"/>
-			</fieldset>
-
-			<fieldset class="input-pair">
-				<label for="locations">{{ prompts.locations }}</label>
-				<select name="location" id="locations" (change)="validate()" [(ngModel)]="locationID" required>
-					<option *ngFor="let location of lds.data" [id]="location._id" class="location" [value]="location._id">{{ location.displayName }}</option>
-				</select>
-			</fieldset>
-		</form>
-	</mat-dialog-content>
-	<mat-dialog-actions id="action-buttons">
-		<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
-		<button mat-button class="action-button" form="edit-printer" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
-	</mat-dialog-actions>
-</div>
+		<fieldset class="input-pair">
+			<label for="locations">{{ prompts.locations }}</label>
+			<select name="location" id="locations" (change)="validate()" [(ngModel)]="locationID" required>
+				<option *ngFor="let location of lds.data" [id]="location._id" class="location" [value]="location._id">{{ location.displayName }}</option>
+			</select>
+		</fieldset>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions id="action-buttons">
+	<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
+	<button mat-button class="action-button" form="edit-printer" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
+</mat-dialog-actions>

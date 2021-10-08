@@ -1,25 +1,33 @@
 import {Component, Inject} from "@angular/core";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {email} from "../../scripts/regex";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
 	templateUrl: '../../views/email.component.html',
 	styleUrls: ['../../styles/email.component.css']
 })
 export class EmailDialogComponent {
-	email: string = '';
+	emailAddress: string = '';
 	valid: boolean = false;
-	emailPattern: RegExp = /[a-zA-Z0-9]\.*[a-zA-Z0-9]+@austingastro\.com/i;
+	changed = false;
+	emailForm = new FormGroup({
+		emailControl: new FormControl('', [Validators.required, Validators.pattern(email)])
+	})
 
 	constructor(private dialogRef: MatDialogRef<EmailDialogComponent>,
 				@Inject(MAT_DIALOG_DATA) data: any) {
 	}
 
 	verifyEmail() {
-		this.valid = this.emailPattern.test(this.email)
+		let pattern = this.emailForm.hasError('pattern', 'emailControl')
+		let required = this.emailForm.hasError('required', 'emailControl')
+
+		this.valid = !(pattern || required)
 	}
 
 	finished() {
-		this.dialogRef.close(this.email);
+		this.dialogRef.close(this.emailAddress);
 	}
 
 	cancel() {

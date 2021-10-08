@@ -9,7 +9,7 @@ import {APIService} from "../services/api.service";
 	styleUrls: ['../../styles/edit-printer.component.css']
 })
 export class EditPrinterDialogComponent implements OnInit {
-	printer: Printer;
+	printer!: Printer;
 	printerName: string = '';
 	pathName: string = '';
 	locationID: string = '';
@@ -33,7 +33,9 @@ export class EditPrinterDialogComponent implements OnInit {
 	constructor(private dialogRef: MatDialogRef<any>,
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
-		this.printer = this.data.printer
+		api.getPrinter(data.id).subscribe(printer => {
+			this.printer = printer
+		})
 
 		api.getLocations().subscribe(locations => {
 			this.lds = new LocationDataSource(locations)

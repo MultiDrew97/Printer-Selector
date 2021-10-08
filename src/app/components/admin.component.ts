@@ -49,7 +49,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 				readonly cookie: CookieService) {
 		this.config = new MatDialogConfig();
 		this.config.disableClose = true;
-		this.config.width = 'auto';
+		this.config.width = '50vw';
 		this.config.height = 'auto';
 
 		this.api.getPrinters().subscribe(data => {
@@ -82,23 +82,21 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Create a new printer
 	 */
 	addPrinter() {
-		openDialog(this.dialog, this.config, AddPrinterDialogComponent).then((newPrinter: Printer) => {
+		openDialog(this.dialog, this.config, AddPrinterDialogComponent).then(async (newPrinter: Printer) => {
+			if (newPrinter === undefined)
+				return
+
 			let retry: boolean = false
 
-			if (!newPrinter) {
-				return
-			}
-
 			do {
-				this.api.addPrinter(newPrinter).subscribe(isSuccessful => {
+				let isSuccessful = await this.api.addPrinter(newPrinter).toPromise()
+				if (isSuccessful) {
 					if (isSuccessful) {
 						location.reload()
 					} else {
-						this.showConfirm('Failed to Add Location. Would you like to try adding it again?').then(res => {
-							retry = res
-						})
+						retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
 					}
-				})
+				}
 			} while (retry)
 		})
 	}
@@ -107,21 +105,21 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Create a new location
 	 */
 	addLocation() {
-		openDialog(this.dialog, this.config, AddLocationDialogComponent).then((newLocation: Location) => {
-			console.debug(newLocation)
+		openDialog(this.dialog, this.config, AddLocationDialogComponent).then(async (newLocation: Location) => {
+			if (newLocation === undefined)
+				return
 
 			let retry: boolean = false
 
 			do {
-				this.api.addLocation(newLocation).subscribe(isSuccessful => {
+				let isSuccessful = await this.api.addLocation(newLocation).toPromise()
+				if (isSuccessful) {
 					if (isSuccessful) {
 						location.search = `ct=${this.tabs.LOCATION}`
 					} else {
-						this.showConfirm('Failed to Add Location. Would you like to try adding it again?').then(res => {
-							retry = res
-						})
+						retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
 					}
-				})
+				}
 			} while (retry)
 		})
 	}
@@ -210,10 +208,9 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * @param printer The printer to be edited
 	 */
 	private editPrinter(printer: Printer): Promise<any> {
-		this.config.maxWidth = '50%';
-		this.config.maxHeight = 'fit-content';
+		this.config.maxHeight = '90vh'
 		this.config.data = {
-			printer: printer
+			id: printer._id
 		}
 
 		return openDialog(this.dialog, this.config, EditPrinterDialogComponent)
@@ -224,9 +221,9 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * @param location The location to be edited
 	 */
 	private editLocation(location: Location): Promise<any> {
-		this.config.maxWidth = '50%';
+		this.config.maxHeight = '90vh'
 		this.config.data = {
-			location: location
+			id: location._id
 		}
 
 		return openDialog(this.dialog, this.config, EditLocationDialogComponent)
@@ -248,6 +245,8 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Show the login prompt
 	 */
 	showLogin() {
+		this.config.minWidth = '25vw';
+		this.config.maxWidth = '30vw';
 		openDialog(this.dialog, this.config, LoginDialogComponent).then((loggedIn: boolean) => {
 			this.authorized = loggedIn
 			let date = new Date();
@@ -274,7 +273,6 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Check to see if the user is authorized to use the admin portal
 	 */
 	checkAuth(): boolean {
-		console.debug(this.authorized)
 		if (this.cookie.get('authorized') !== 'true') {
 			this.showLogin()
 			return false
@@ -296,7 +294,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	}
 
 	/**
-	 * Perform some clean up on the page, removing cookies and performing unsubscriptions
+	 * Perform some clean up on the page, removing cookies and unsubscribe
 	 */
 	@HostListener('window:beforeunload', ['$event'])
 	cleanUp(_: BeforeUnloadEvent) {

@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from "@angular/core";
-import {Location, Printer} from "../../scripts/models";
+import {Printer} from "../../scripts/models";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ActivatedRoute} from "@angular/router";
 import {openDialog} from "../../scripts/utils";
@@ -14,45 +14,44 @@ import {EmailDialogComponent} from "../dialogs/email-dialog.component";
 	styleUrls: ['../../styles/get-printers.component.css']
 })
 export class GetPrintersComponent implements OnInit {
-	locations: Location[] = [];
 	selectedPrinters: Printer[] = [];
-	currentLocation: number = 0
-	config: MatDialogConfig
-	ipAddress: string = ''
+	currentLocation: number = 0;
+	config: MatDialogConfig;
 
-	constructor(private dialog: MatDialog, readonly api: APIService, private route: ActivatedRoute, @Inject('key') private readonly apiKey: string) {
+	constructor(private dialog: MatDialog, readonly api: APIService, readonly route: ActivatedRoute, @Inject('key') private readonly apiKey: string) {
 		this.config = new MatDialogConfig()
 		this.config.disableClose = false;
 		this.config.autoFocus = true;
 
+		//this.locations = this.route.snapshot.data.locations
+	}
+
+	ngOnInit(): void {
 		// TODO: Use this to get the IP Address of the computer and use for auto selecting locations
 		/*checkIPAddress(apiKey).then(ip => {
 			this.determineTab(ip);
 		})*/
+
+		this.determineTab('209.170.229.86');
 	}
 
-	ngOnInit(): void {
-		for (const location of this.route.snapshot.data.locations) {
-			this.locations.push(location)
-		}
-
-		this.determineTab('209.202.232.142');
-	}
-
-	selectAll(location: Location) {
-		for (const printer of location.printers) {
+	selectAll(index: number) {
+		for (const printer of this.route.snapshot.data.locations[index].printers) {
 			printer.checked = true
 		}
 	}
 
-	deselectAll(location: Location) {
-		for (const printer of location.printers) {
+	deselectAll(index: number) {
+		for (const printer of this.route.snapshot.data.locations[index].printers) {
 			printer.checked = false;
 		}
 	}
 
 	determineTab(ipAddress: string) {
-		for (const [index, location] of this.locations.entries()) {
+		let count = 0;
+		// TODO: Make a popup window to pick between the locations with shared WAN IP addresses?
+		for (const [index, location] of this.route.snapshot.data.locations.entries()) {
+			count += ipAddress === location.ipAddress ? 1 : 0;
 			if (ipAddress === location.ipAddress) {
 				// Use the location to set active tab
 				this.currentLocation = index;
@@ -66,7 +65,7 @@ export class GetPrintersComponent implements OnInit {
 			return
 		}
 
-		for (const location of this.locations) {
+		for (const location of this.route.snapshot.data.locations) {
 			for (const printer of location.printers) {
 				printer.checked = false
 			}
@@ -85,7 +84,7 @@ export class GetPrintersComponent implements OnInit {
 			let email: string = await this.getEmail()
 
 			// TODO: Find how to clean this up and optimize this a little bit
-			if (email === '') {
+			if (email === '' || email === undefined) {
 				if (await this.showConfirm('Would you like to retry entering your email address?')) {
 					retry = true
 				}
@@ -97,7 +96,7 @@ export class GetPrintersComponent implements OnInit {
 				valid = true;
 			}
 
-			if (!retry && valid) {
+			if (valid) {
 				if (await this.showConfirm(`Is this the right selection?<br/>${confirmedPrinters}`)) {
 					// Send the printers list to the API to send the emails
 					this.api.sendEmail(email, printerPaths).subscribe((returned: { status: number }) => {
@@ -112,18 +111,18 @@ export class GetPrintersComponent implements OnInit {
 						await this.clearSelection()
 					}
 				}
-			} else if (retry) {
-				if (await this.showConfirm('Would you like to retry?')) {
-					// Retry email address
-					await this.sendSelected()
-				}
+			}
+
+			if (retry) {
+				// TODO: Clean this area up to be more efficient instead of using recursion
+				await this.sendSelected()
 			}
 		}
 	}
 
 	getPrinters() {
 		this.selectedPrinters = [] as Printer[]
-		for (const data of this.locations) {
+		for (const data of this.route.snapshot.data.locations) {
 			for (const printer of data.printers) {
 				if (printer.checked) {
 					this.selectedPrinters.push(printer);
@@ -133,10 +132,19 @@ export class GetPrintersComponent implements OnInit {
 	}
 
 	getEmail(): Promise<string> {
+		this.config.minWidth = '40vw'
+		this.config.maxWidth = '50vw'
+		this.config.minHeight = '30vh'
+		this.config.maxHeight = '80vh'
+
 		return openDialog(this.dialog, this.config, EmailDialogComponent)
 	}
 
 	showConfirm(message: string): Promise<boolean> {
+		this.config.minWidth = '10vw'
+		this.config.maxWidth = '20vw'
+		this.config.minHeight = '30vh'
+		this.config.maxHeight = '50vh'
 		this.config.data = {
 			message: message
 		}
@@ -145,11 +153,16 @@ export class GetPrintersComponent implements OnInit {
 	}
 
 	showAlert(message: string): void {
+		this.config.minWidth = '25vw'
+		this.config.maxWidth = '40vw'
+		this.config.minHeight = '20vh'
+		this.config.maxHeight = '30vh'
+
 		this.config.data = {
 			message: message
 		}
 
-		openDialog(this.dialog, this.config, AlertDialogComponent)
+		openDialog(this.dialog, this.config, AlertDialogComponent).then()
 	}
 
 	parseConfirms(): { confirmedPrinters: string, printerPaths: string[] } {
@@ -172,11 +185,7 @@ export class GetPrintersComponent implements OnInit {
 	}
 
 	tabChanged($event: MatTabChangeEvent) {
-		this.deselectAll(this.locations[$event.index])
+		this.deselectAll($event.index)
 		this.currentLocation = $event.index
-	}
-
-	temp() {
-		console.debug(this.currentLocation)
 	}
 }

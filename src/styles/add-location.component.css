@@ -4,15 +4,13 @@
 }
 
 .printer {
-	float: left;
-	width: 33.3%;
+	width: auto;
+	min-width: 80%;
+	max-width: 100%;
 	border-bottom: 1px black solid;
 	box-sizing: border-box;
-}
-
-.input-pair {
-	display: inline-grid;
-	margin: 5%;
+	white-space: normal;
+	text-align: center;
 }
 
 #dialog {

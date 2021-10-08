@@ -23,17 +23,21 @@ a.route-link {
 	text-align: center;
 }
 
-#bottom {
-	color: #c0c0c0
-}
-
-#bottom a {
-	color: lightblue;
+#bottom p {
+	padding: 1%;
+	box-sizing: border-box;
 	text-decoration: none;
+	color: #c0c0c0;
+	text-align: center;
 }
 
-#bottom a:hover {
-	color: lightskyblue;
+#bottom p a {
+	text-decoration: none;
+	color: lightblue;
+}
+
+#bottom p a:hover {
+	color: deepskyblue;
 }
 
 .main {
@@ -121,6 +125,16 @@ tutorials, faqs {
 
 .input-pair * {
 	font: 1.2rem normal;
+}
+
+.input-pair {
+	display: inline-grid;
+	padding: 3%;
+	margin: 1%;
+}
+
+.dialog-form {
+	width: 100%;
 }
 
 /* Collapsible Based Styles */

@@ -1,19 +1,22 @@
 <div class="container">
 	<mat-dialog-content>
-		<form id="login" (ngSubmit)="login()">
-			<div class="input-pair">
-				<label for="username">{{ prompts.username }}</label>
-				<input id="username" name="username" autocomplete="on" type="text" [(ngModel)]="user" (ngModelChange)="validate()" required />
-			</div>
+		<form id="login" (ngSubmit)="login()" [formGroup]="loginForm">
+			<mat-form-field class="input-pair" floatLabel="auto" appearance="fill" hideRequiredMarker>
+				<mat-label>{{ prompts.username }}</mat-label>
+				<input matInput formControlName="username" id="username" name="username" autocomplete="on" type="text"
+					   [(ngModel)]="user" placeholder="{{ prompts.username.toLowerCase() }}" required/>
+			</mat-form-field>
 
-			<div class="input-pair">
-				<label for="password">{{ prompts.password }}</label>
-				<input id="password" name="password" autocomplete="on" type="password" [(ngModel)]="pass" (ngModelChange)="validate()" required />
-			</div>
+			<mat-form-field class="input-pair" floatLabel="auto" appearance="fill" hideRequiredMarker>
+				<mat-label>{{ prompts.password }}</mat-label>
+				<input matInput formControlName="password" id="password" name="password" autocomplete="on"
+					   type="password" [(ngModel)]="pass" placeholder="{{ prompts.password.toLowerCase() }}" required/>
+				<mat-error *ngIf="invalidLogin">Unable to sign you in</mat-error>
+			</mat-form-field>
 		</form>
 	</mat-dialog-content>
 	<mat-dialog-actions id="action-buttons">
 		<button mat-button class="action-button" (click)="close()">{{ buttons.cancel }}</button>
-		<button mat-button class="action-button" type="submit" form="login" [disabled]="!valid">{{ buttons.login }}</button>
+		<button mat-button class="action-button" type="submit" form="login">{{ buttons.login }}</button>
 	</mat-dialog-actions>
 </div>

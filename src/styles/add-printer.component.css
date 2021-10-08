@@ -1,13 +1,3 @@
-.form-field {
-	display: grid;
-	margin: 5%;
-
-}
-
-.action-button {
-	white-space: nowrap;
-}
-
 #dialog {
 	width: auto;
 	height: auto;

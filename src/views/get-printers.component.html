@@ -2,26 +2,25 @@
 	<header id="add-header">
 		<h1 class="add-header">Add Printers</h1>
 	</header>
-	<!-- TODO: Add Links to go to desired location dropdowns -->
 
 	<div id="selection-container">
 		<!-- TODO: Figure out how to link this dropdown to the tabs correctly -->
-		<select id="location-selection" [(ngModel)]="currentLocation" (ngModelChange)="temp()">
-			<option *ngFor="let location of locations; let i = index" [value]="i">{{ location.displayName }}</option>
-		</select>
+		<mat-select id="location-selection" [(ngModel)]="currentLocation">
+			<mat-option *ngFor="let location of route.snapshot.data.locations; let i = index" [value]="i">{{ location.displayName }}</mat-option>
+		</mat-select>
+		<br />
+		<div class='selection-buttons'>
+			<button mat-raised-button class='location-selection deselect' (click)='deselectAll(currentLocation)'>Unselect All</button>
+			<button mat-raised-button class='location-selection select' (click)='selectAll(currentLocation)'>Select All</button>
+		</div>
 	</div>
 
 	<br/>
 
-	<div>
+	<div id="location-tabs">
 		<mat-tab-group id="locations" [(selectedIndex)]="currentLocation" (selectedTabChange)="tabChanged($event)">
-			<mat-tab [id]="location._id" *ngFor="let location of locations; let i = index"
+			<mat-tab [id]="location._id" *ngFor="let location of route.snapshot.data.locations; let i = index"
 					 [label]="location.displayName" [tabIndex]="i" class="location-tab">
-				<div class='selection-buttons'>
-					<button class='location-deselect-all' (click)='deselectAll(location)'>Unselect All</button>
-					<button class='location-select-all' (click)='selectAll(location)'>Select All</button>
-				</div>
-				<br/>
 				<div class='printers'>
 					<mat-checkbox class='printer' [(ngModel)]="printer.checked"
 								  *ngFor='let printer of location.printers'>{{ printer.displayName }}</mat-checkbox>
@@ -30,26 +29,8 @@
 		</mat-tab-group>
 	</div>
 
-	<!--<div class='collapsible-container'>
-		<div class='location-set' *ngFor='let location of locations' [id]="location._id">
-			<div *ngIf="location._id === filter">
-				<div class='selection-buttons'>
-					<button class='location-select-all' (click)='selectAll(location)'>Select All</button>
-					<button class='location-deselect-all' (click)='deselectAll(location)'>Unselect All</button>
-				</div>
-
-				<button class='location collapsible'
-						(click)='toggleCollapse($event.target)'>{{ location.displayName }}</button>
-				<div class='collapsible-content'>
-					<mat-checkbox class='printer' [(ngModel)]="printer.checked"
-								  *ngFor='let printer of location.printers'>{{ printer.displayName }}</mat-checkbox>
-				</div>
-			</div>
-		</div>
-	</div>-->
-
-	<footer class='nav-buttons'>
-		<button (click)="clearSelection(true)">Clear Selections</button>
-		<button (click)="sendSelected()">Get Printers</button>
+	<footer id="action-buttons" class="main-buttons">
+		<button mat-button mat-raised-button class="action-button" (click)="clearSelection(true)">Clear Selections</button>
+		<button mat-button mat-raised-button class="action-button" (click)="sendSelected()">Get Printers</button>
 	</footer>
 </div>

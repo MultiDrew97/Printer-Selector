@@ -1,5 +1,6 @@
 import {Component, Inject} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
 	templateUrl: '../../views/login.component.html',
@@ -14,24 +15,32 @@ export class LoginDialogComponent {
 	}
 
 	prompts = {
-		username: 'Username:',
+		username: 'Username',
 		password: 'Password'
 	}
 
-	valid: boolean = false
+	invalidLogin: boolean = false
 
-	constructor(private dialogRef: MatDialogRef<boolean>, @Inject('creds') private readonly creds: { user: string, pass: string }) {
+	loginForm = new FormGroup({
+		username: new FormControl('1', [Validators.required]),
+		password: new FormControl('1', [Validators.required])
+	})
+
+	constructor(private dialogRef: MatDialogRef<boolean>,
+				@Inject('creds') private readonly creds: { user: string, pass: string }) {
 	}
 
 	login() {
-		if (this.user === this.creds.user && this.pass === this.creds.pass) {
+		if (this.isValidLogin()) {
+			this.invalidLogin = false;
 			this.finished()
 		} else {
 			this.pass = ''
+			this.invalidLogin = true
 		}
 	}
 
-	close(){
+	close() {
 		this.dialogRef.close(false)
 	}
 
@@ -39,18 +48,15 @@ export class LoginDialogComponent {
 		this.dialogRef.close(true)
 	}
 
-	validate() {
-		let validUser = this.validateUser();
-		let validPass = this.validatePass();
-
-		this.valid = validUser && validPass;
+	isValidLogin(): boolean {
+		return this.isValidUsername() && this.isValidPassword()
 	}
 
-	validateUser(): boolean {
-		return this.user.length > 0 && !/^\s+$/i.test(this.user)
+	isValidUsername(): boolean {
+		return this.user.length > 0 && !/^\s+$/i.test(this.user) && this.user === this.creds.user
 	}
 
-	validatePass(): boolean {
-		return this.pass.length > 0 && !/^\s+$/i.test(this.pass)
+	isValidPassword(): boolean {
+		return this.pass.length > 0 && !/^\s+$/i.test(this.pass) && this.pass === this.creds.pass
 	}
 }

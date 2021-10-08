@@ -1,40 +1,43 @@
-<div id="container">
-	<mat-dialog-content>
-		<h1>Edit Location</h1>
+<h2>Edit Location</h2>
 
-		<header id="edit-header">
-			<h3>{{ location.displayName }}</h3>
+<header id="edit-header">
+	<h3>{{ location.displayName }}</h3>
 
-			<br/>
+	<button mat-button (click)="delete()" id="remove-location">{{ buttons.delete }}</button>
+</header>
 
-			<button mat-button (click)="delete()" id="remove-location">{{ buttons.delete }}</button>
-		</header>
-		<form id="edit-form" (submit)="finished()" (change)="validate()">
-			<fieldset class="input-pair">
-				<label for="locationID">{{ prompts.locationID }}</label>
-				<input name="locationID" id="locationID" type="text" readonly [ngModel]="location._id" />
-			</fieldset>
+<hr />
 
-			<fieldset class="input-pair">
-				<label for="locationName">{{ prompts.locationName }}</label>
-				<input name="locationName" id="locationName" type="text" [(ngModel)]="locationName"/>
-			</fieldset>
+<mat-dialog-content>
+	<form id="edit-form" class="dialog-form" (submit)="finished()" (change)="validate()" [formGroup]="editForm">
+		<mat-form-field class="input-pair" appearance="outline" floatLabel="auto">
+			<mat-label>{{ prompts.locationID }}</mat-label>
+			<input matInput name="locationID" id="locationID" type="text" readonly [ngModel]="location._id" />
+		</mat-form-field>
 
-			<fieldset class="input-pair">
-				<label for="ipAddress">{{ prompts.ipAddress }}</label>
-				<input name="ipAddress" id="ipAddress" type="text" [(ngModel)]="ipAddress" (ngModelChange)="validate()" />
-			</fieldset>
+		<mat-form-field class="input-pair" appearance="outline"  floatLabel="auto">
+			<mat-label>{{ prompts.locationName }}</mat-label>
+			<input matInput formControlName="name" name="locationName" id="locationName" type="text" [(ngModel)]="locationName" required/>
+			<mat-error>A location name is required</mat-error>
+		</mat-form-field>
 
-			<fieldset class="input-pair">
-				<label for="location-printers">{{ prompts.locationPrinters }}</label>
-				<select name="locationPrinters" multiple id="location-printers" [(ngModel)]="newPrinters">
-					<option *ngFor="let printer of pds.data" [id]="printer._id" class="printer" [value]="printer._id">{{ printer.displayName }}</option>
-				</select>
-			</fieldset>
-		</form>
-	</mat-dialog-content>
-	<mat-dialog-actions id="action-buttons">
-		<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
-		<button mat-button class="action-button" form="edit-location" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
-	</mat-dialog-actions>
-</div>
+		<mat-form-field class="input-pair" appearance="outline" floatLabel="auto" hintLabel="i.e. 192.168.0.1">
+			<mat-label>{{ prompts.ipAddress }}</mat-label>
+			<input formControlName="ip" matInput [placeholder]="prompts.ipAddress" name="ipAddress" id="ipAddress" type="text" [(ngModel)]="ipAddress" (ngModelChange)="validateIP()" required/>
+			<mat-error *ngIf="editForm.hasError('pattern', 'ip')" id="incorrect-format">IP Address must be in 123.456.789.012 format.</mat-error>
+			<mat-error *ngIf="editForm.hasError('required', 'ip')">An IP Address is required for every location</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="input-pair" appearance="outline"  floatLabel="auto" >
+			<mat-label>{{ prompts.locationPrinters }}</mat-label>
+			<mat-hint>Use ctrl or shift to select multiple printers</mat-hint>
+			<select matNativeControl name="locationPrinters" multiple id="location-printers" [(ngModel)]="newPrinters">
+				<option *ngFor="let printer of pds.data" [id]="printer._id" class="printer" [value]="printer._id">{{ printer.displayName }}</option>
+			</select>
+		</mat-form-field>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions id="action-buttons">
+	<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
+	<button mat-button class="action-button" form="edit-form" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
+</mat-dialog-actions>
