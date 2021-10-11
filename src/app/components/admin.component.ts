@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, HostListener, OnDestroy} from "@angular/core";
+import {AfterContentInit, Component, HostListener, OnInit} from "@angular/core";
 import {SortColumn, SortOrder, Tabs} from "../../scripts/enums";
 import {LocationDataSource, PrinterDataSource} from "../../scripts/datasource";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -21,7 +21,7 @@ import {EditLocationDialogComponent} from "../dialogs/edit-location-dialog.compo
 	templateUrl: '../../views/admin.component.html',
 	styleUrls: ['../../styles/admin.component.css']
 })
-export class AdminComponent implements AfterContentInit, OnDestroy {
+export class AdminComponent implements AfterContentInit, OnInit {
 	title: string = 'Admin Portal'
 	currentTab: number = Tabs.PRINTER
 	authorized: boolean = false;
@@ -52,30 +52,22 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 		this.config.width = '50vw';
 		this.config.height = 'auto';
 
-		this.api.getPrinters().subscribe(data => {
-			this.pds = new PrinterDataSource(data)
-			this.pds.filterPredicate = (data, filter) => (data.displayName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1 || data.pathName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1)
-			this.sortPrinters({direction: 'asc', active: 'displayName'})
-		})
-
-		this.api.getLocations().subscribe(data => {
-			this.lds = new LocationDataSource(data)
-			this.lds.filterPredicate = (data, filter): boolean => data.displayName.toLowerCase().indexOf(filter.trim().toLowerCase()) !== -1
-			this.sortLocations({direction: 'asc', active: 'displayName'})
-		})
+		this.pds = new PrinterDataSource(route.snapshot.data.printers)
+		this.lds = new LocationDataSource(route.snapshot.data.locations)
 
 		// TODO: Remove when I finally understand reload vs close
 		sessionStorage.setItem('reload', 'temp')
 		localStorage.setItem('reload', 'temp')
 	}
 
+	ngOnInit() {
+		this.sortLocations()
+		this.sortPrinters()
+	}
+
 	ngAfterContentInit() {
 		this.checkAuth()
 		this.checkTab()
-	}
-
-	ngOnDestroy() {
-
 	}
 
 	/**
@@ -89,13 +81,12 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 			let retry: boolean = false
 
 			do {
-				let isSuccessful = await this.api.addPrinter(newPrinter).toPromise()
+				let isSuccessful = await this.api.addPrinter(newPrinter)
+
 				if (isSuccessful) {
-					if (isSuccessful) {
-						location.reload()
-					} else {
-						retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
-					}
+					location.reload()
+				} else {
+					retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
 				}
 			} while (retry)
 		})
@@ -112,13 +103,12 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 			let retry: boolean = false
 
 			do {
-				let isSuccessful = await this.api.addLocation(newLocation).toPromise()
+				let isSuccessful = await this.api.addLocation(newLocation)
+
 				if (isSuccessful) {
-					if (isSuccessful) {
-						location.search = `ct=${this.tabs.LOCATION}`
-					} else {
-						retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
-					}
+					location.search = `ct=${this.tabs.LOCATION}`
+				} else {
+					retry = await this.showConfirm('Failed to Add Location. Would you like to try adding it again?')
 				}
 			} while (retry)
 		})
@@ -136,11 +126,11 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 
 		if (updatedLocation.delete) {
 			if (await this.showConfirm(`Are you sure you want to delete ${location.displayName}?`)) {
-				this.api.deleteLocation(location._id).subscribe(async _ => {
+				this.api.deleteLocation(location._id).then(async _ => {
 					await this.showAlert(`${location.displayName} has been removed`)
-				}, async error => {
+				}, async reason => {
 					await this.showAlert(`Something went wrong removing ${location.displayName}. Please try again.`)
-					console.error(error)
+					console.error(reason)
 				})
 			} else {
 				if (await this.showConfirm(`Would you like to continue editing ${location.displayName}?`)) {
@@ -150,15 +140,15 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 			return
 		}
 
-		this.api.updateLocation(updatedLocation.location).subscribe(_ => {
-			this.api.getLocations().subscribe(data => {
+		this.api.updateLocation(updatedLocation.location).then(_ => {
+			this.api.getLocations().then(data => {
 				this.lds.data = data
-				this.sortLocations({direction: 'asc', active: 'displayName'})
+				this.sortLocations()
 			})
 			alert('Location updated successfully')
-		}, error => {
+		}, reason => {
 			alert('Unable to update the location')
-			console.error(error)
+			console.error(reason)
 		})
 	}
 
@@ -176,10 +166,10 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 			// Confirm printer deletion
 			if (await this.showConfirm(`Are you sure you want to delete ${printer.displayName}?`)) {
 				// Remove printer from database
-				this.api.deletePrinter(printer._id).subscribe(async _ => {
+				this.api.deletePrinter(printer._id).then(async _ => {
 					await this.showAlert(`${printer.displayName} has been removed`)
-				}, async error => {
-					console.error(error)
+				}, async reason => {
+					console.error(reason)
 					await this.showAlert(`Something went wrong removing ${printer.displayName}. Please try again.`)
 				})
 			} else {
@@ -191,15 +181,15 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 			return
 		}
 
-		this.api.updatePrinter(updatedPrinter.printer, updatedPrinter.locationID).subscribe(_ => {
-			this.api.getPrinters().subscribe(data => {
+		this.api.updatePrinter(updatedPrinter.printer, updatedPrinter.locationID).then(_ => {
+			this.api.getPrinters().then(data => {
 				this.pds.data = data
-				this.sortPrinters({direction: 'asc', active: 'displayName'})
+				this.sortPrinters()
 			})
 			this.showAlert(`${printer.displayName} was updated successfully`)
-		}, error => {
+		}, reason => {
 			this.showAlert('Unable to update the printer')
-			console.error(error)
+			console.error(reason)
 		})
 	}
 
@@ -210,7 +200,8 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	private editPrinter(printer: Printer): Promise<any> {
 		this.config.maxHeight = '90vh'
 		this.config.data = {
-			id: printer._id
+			printer: printer,
+			locations: this.lds.data
 		}
 
 		return openDialog(this.dialog, this.config, EditPrinterDialogComponent)
@@ -223,7 +214,8 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	private editLocation(location: Location): Promise<any> {
 		this.config.maxHeight = '90vh'
 		this.config.data = {
-			id: location._id
+			location: location,
+			printers: this.pds.data
 		}
 
 		return openDialog(this.dialog, this.config, EditLocationDialogComponent)
@@ -311,7 +303,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Sort the printers based on the sort parameters
 	 * @param s {Sort} The sort parameters
 	 */
-	sortPrinters(s: Sort) {
+	sortPrinters(s: Sort = {active: 'displayName', direction: 'asc'}) {
 		let column = s.active === 'displayName' ? SortColumn.DISPLAY : SortColumn.PATH
 		let order = (s.direction === '' || s.direction === 'asc') ? SortOrder.NORMAL : SortOrder.REVERSED;
 
@@ -322,7 +314,7 @@ export class AdminComponent implements AfterContentInit, OnDestroy {
 	 * Sort the locations based on the sort parameters
 	 * @param s {Sort} The sort parameters
 	 */
-	sortLocations(s: Sort) {
+	sortLocations(s: Sort = {active: 'displayName', direction: 'asc'}) {
 		let column = s.active === 'displayName' ? SortColumn.DISPLAY : SortColumn.IP
 		let order = (s.direction === '' || s.direction === 'asc') ? SortOrder.NORMAL : SortOrder.REVERSED
 

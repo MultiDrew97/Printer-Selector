@@ -25,7 +25,7 @@ export class AddLocationDialogComponent {
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
 
-		api.getPrinters().subscribe(printers => {
+		api.getPrinters().then(printers => {
 			this.pds = new PrinterDataSource(printers)
 		})
 	}

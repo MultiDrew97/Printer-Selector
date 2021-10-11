@@ -1,15 +1,14 @@
 import {Inject, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {FAQ, Printer, Tutorial, Location} from "../../scripts/models";
-import {Observable} from "rxjs";
-import {encode, format} from "../../scripts/utils";
+import {encode} from "../../scripts/utils";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class APIService {
-	//private readonly baseURI: string = 'http://localhost:3500/api';
-	private readonly baseURI: string = 'http://ad-its:3500/api';
+	private readonly baseURI: string = 'http://localhost:3500/api';
+	// private readonly baseURI: string = 'http://ad-its:3500/api';
 	private readonly headers: HttpHeaders;
 
 	constructor(
@@ -23,71 +22,71 @@ export class APIService {
 		});
 	}
 
-	getPrinters(): Observable<Printer[]> {
-		return this.http.get<Printer[]>(`${this.baseURI}/printers`, {headers: this.headers})
+	getPrinters(): Promise<Printer[]> {
+		return this.http.get<Printer[]>(`${this.baseURI}/printers`, {headers: this.headers}).toPromise()
 	}
 
-	getPrinter(id: string): Observable<Printer> {
-		return this.http.get<Printer>(`${this.baseURI}/printers?id=${id}`, {headers: this.headers});
+	getPrinter(id: string): Promise<Printer> {
+		return this.http.get<Printer>(`${this.baseURI}/printers?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	getLocations(): Observable<Location[]> {
-		return this.http.get<Location[]>(`${this.baseURI}/locations`, {headers: this.headers});
+	getLocations(): Promise<Location[]> {
+		return this.http.get<Location[]>(`${this.baseURI}/locations`, {headers: this.headers}).toPromise();
 	}
 
-	getLocation(id: string): Observable<Location> {
-		return this.http.get<Location>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers});
+	getLocation(id: string): Promise<Location> {
+		return this.http.get<Location>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	addLocation(location: Location): Observable<boolean> {
-		return this.http.post<boolean>(`${this.baseURI}/locations`, location, {headers: this.headers})
+	addLocation(location: Location): Promise<boolean> {
+		return this.http.post<boolean>(`${this.baseURI}/locations`, location, {headers: this.headers}).toPromise()
 	}
 
-	addPrinter(printer: Printer): Observable<boolean> {
-		return this.http.post<boolean>(`${this.baseURI}/printers`, printer, {headers: this.headers})
+	addPrinter(printer: Printer): Promise<boolean> {
+		return this.http.post<boolean>(`${this.baseURI}/printers`, printer, {headers: this.headers}).toPromise()
 	}
 
-	deletePrinter(id: string): Observable<boolean> {
-		return this.http.delete<boolean>(`${this.baseURI}/printers?id=${id}`, {headers: this.headers})
+	deletePrinter(id: string): Promise<boolean> {
+		return this.http.delete<boolean>(`${this.baseURI}/printers?id=${id}`, {headers: this.headers}).toPromise()
 	}
 
-	deleteLocation(id: string): Observable<boolean> {
-		return this.http.delete<boolean>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers})
+	deleteLocation(id: string): Promise<boolean> {
+		return this.http.delete<boolean>(`${this.baseURI}/locations?id=${id}`, {headers: this.headers}).toPromise()
 	}
 
-	updatePrinter(printer: Printer, locationID: string): Observable<boolean> {
-		return this.http.put<boolean>(`${this.baseURI}/printers?id=${printer._id}&locationID=${locationID}`, printer, {headers: this.headers})
+	updatePrinter(printer: Printer, locationID: string): Promise<boolean> {
+		return this.http.put<boolean>(`${this.baseURI}/printers?id=${printer._id}&locationID=${locationID}`, printer, {headers: this.headers}).toPromise()
 	}
 
-	updateLocation(location: Location): Observable<boolean> {
-		return this.http.put<boolean>(`${this.baseURI}/locations?id=${location._id}`, location, {headers: this.headers})
+	updateLocation(location: Location): Promise<boolean> {
+		return this.http.put<boolean>(`${this.baseURI}/locations?id=${location._id}`, location, {headers: this.headers}).toPromise()
 	}
 
-	sendEmail(email: string, printers: string[]): Observable<any> {
-		return this.http.post(`${this.baseURI}/emails`, {email: email, printers: printers}, {headers: this.headers})
+	sendEmail(body: {email: string, printers: string[], batch: string}): Promise<any> {
+		return this.http.post(`${this.baseURI}/emails`, body, {headers: this.headers}).toPromise()
 	}
 
-	deleteFAQ(id: string): Observable<any> {
-		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	deleteFAQ(id: string): Promise<any> {
+		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	deleteTutorial(id: string): Observable<any> {
-		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	deleteTutorial(id: string): Promise<any> {
+		return this.http.delete(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	getFAQ(id: string): Observable<FAQ> {
-		return this.http.get<FAQ>(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers});
+	getFAQ(id: string): Promise<FAQ> {
+		return this.http.get<FAQ>(`${this.baseURI}/faqs?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	getFAQs(): Observable<FAQ[]> {
-		return this.http.get<FAQ[]>(`${this.baseURI}/faqs`, {headers: this.headers});
+	getFAQs(): Promise<FAQ[]> {
+		return this.http.get<FAQ[]>(`${this.baseURI}/faqs`, {headers: this.headers}).toPromise();
 	}
 
-	getTutorial(id: string): Observable<Tutorial> {
-		return this.http.get<Tutorial>(`${this.baseURI}/tutorials?id=${id}`, {headers: this.headers});
+	getTutorial(id: string): Promise<Tutorial> {
+		return this.http.get<Tutorial>(`${this.baseURI}/tutorials?id=${id}`, {headers: this.headers}).toPromise();
 	}
 
-	getTutorials(): Observable<Tutorial[]> {
-		return this.http.get<Tutorial[]>(`${this.baseURI}/tutorials`, {headers: this.headers});
+	getTutorials(): Promise<Tutorial[]> {
+		return this.http.get<Tutorial[]>(`${this.baseURI}/tutorials`, {headers: this.headers}).toPromise();
 	}
 }

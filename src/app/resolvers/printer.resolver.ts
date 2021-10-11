@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {Resolve} from "@angular/router";
-import {Observable} from "rxjs";
 import {APIService} from "../services/api.service";
 import {Printer} from "../../scripts/models";
 
@@ -10,7 +9,7 @@ import {Printer} from "../../scripts/models";
 export class PrinterResolver implements Resolve<Printer[]> {
 	constructor(private api: APIService) {}
 
-	resolve(): Observable<Printer[]> {
+	resolve(): Promise<Printer[]> {
 		return this.api.getPrinters();
 	}
 }

@@ -3,6 +3,7 @@ import {Printer} from "../../scripts/models";
 import {LocationDataSource} from "../../scripts/datasource";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {APIService} from "../services/api.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
 	templateUrl: '../../views/edit-printer.component.html',
@@ -10,11 +11,17 @@ import {APIService} from "../services/api.service";
 })
 export class EditPrinterDialogComponent implements OnInit {
 	printer!: Printer;
-	printerName: string = '';
-	pathName: string = '';
+	/*printerName: string = '';
+	pathName: string = '';*/
 	locationID: string = '';
 	oldLocation: string = '';
 	lds!: LocationDataSource;
+	editForm = new FormGroup({
+		id: new FormControl(),
+		displayName: new FormControl('', [Validators.required]),
+		pathName: new FormControl('', [Validators.required]),
+		location: new FormControl('')
+	})
 
 	valid: boolean = true
 
@@ -33,23 +40,12 @@ export class EditPrinterDialogComponent implements OnInit {
 	constructor(private dialogRef: MatDialogRef<any>,
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
-		api.getPrinter(data.id).subscribe(printer => {
-			this.printer = printer
-		})
-
-		api.getLocations().subscribe(locations => {
-			this.lds = new LocationDataSource(locations)
-			this.getLocationID()
-		})
 	}
 
 	ngOnInit() {
-		this.printerName = this.printer.displayName
-		this.pathName = this.printer.pathName
-
-		/*setTimeout(() => {
-			this.getLocationID()
-		}, 1)*/
+		this.printer = this.data.printer
+		this.lds = new LocationDataSource(this.data.locations)
+		this.getLocationID()
 	}
 
 	delete() {
@@ -63,29 +59,19 @@ export class EditPrinterDialogComponent implements OnInit {
 	}
 
 	finished() {
-		if(this.valid) {
-
-			this.printer.displayName = this.printer.displayName !== this.printerName ? this.printerName : this.printer.displayName;
-			this.printer.pathName = this.printer.pathName !== this.pathName ? this.pathName : this.printer.pathName;
-
-			let updated = {
-				printer: this.printer,
-				locationID: this.locationID
-			}
-
-			this.dialogRef.close(updated)
-			/*this.printer.displayName = this.printerName
-			this.printer.pathName = this.pathName
-			if(this.locationID !== this.oldLocation) {
-				let updated = {
-					printer: [this.printer],
-					newLocation: this.locationID
-				}
-				this.dialogRef.close(updated)
-			} else {
-				this.dialogRef.close(this.printer)
-			}*/
+		if(!this.valid) {
+			return
 		}
+
+			/*this.printer.displayName = this.printer.displayName !== this.printerName ? this.printerName : this.printer.displayName;
+			this.printer.pathName = this.printer.pathName !== this.pathName ? this.pathName : this.printer.pathName;*/
+
+		let updated = {
+			printer: this.printer,
+			locationID: this.locationID
+		}
+
+		this.dialogRef.close(updated)
 	}
 
 	validate() {
@@ -101,11 +87,11 @@ export class EditPrinterDialogComponent implements OnInit {
 	}
 
 	validatePathName(): boolean {
-		return this.pathName.length > 0 && !/^\s+$/i.test(this.pathName)
+		return this.printer.pathName.length > 0 && !/^\s+$/i.test(this.printer.pathName)
 	}
 
 	validateDisplayName(): boolean {
-		return this.printerName.length > 0 && !/^\s+$/i.test(this.printerName)
+		return this.printer.displayName.length > 0 && !/^\s+$/i.test(this.printer.displayName)
 	}
 
 	validateLocationID(): boolean {

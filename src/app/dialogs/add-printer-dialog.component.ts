@@ -33,7 +33,7 @@ export class AddPrinterDialogComponent implements OnInit {
 	constructor(readonly dialogRef: MatDialogRef<any>,
 				@Inject(MAT_DIALOG_DATA) readonly data: any,
 				private readonly api: APIService) {
-		api.getLocations().subscribe(locations => {
+		api.getLocations().then(locations => {
 			this.lds = new LocationDataSource(locations)
 		})
 	}

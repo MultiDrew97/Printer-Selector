@@ -12,18 +12,18 @@
 	<form id="edit-form" class="dialog-form" (submit)="finished()" (change)="validate()" [formGroup]="editForm">
 		<mat-form-field class="input-pair" appearance="outline" floatLabel="auto">
 			<mat-label>{{ prompts.locationID }}</mat-label>
-			<input matInput name="locationID" id="locationID" type="text" readonly [ngModel]="location._id" />
+			<input matInput name="locationID" id="locationID" type="text" readonly [ngModel]="location._id"  formControlName="id" />
 		</mat-form-field>
 
 		<mat-form-field class="input-pair" appearance="outline"  floatLabel="auto">
 			<mat-label>{{ prompts.locationName }}</mat-label>
-			<input matInput formControlName="name" name="locationName" id="locationName" type="text" [(ngModel)]="locationName" required/>
+			<input matInput formControlName="name" name="locationName" id="locationName" type="text" [(ngModel)]="location.displayName" required/>
 			<mat-error>A location name is required</mat-error>
 		</mat-form-field>
 
 		<mat-form-field class="input-pair" appearance="outline" floatLabel="auto" hintLabel="i.e. 192.168.0.1">
 			<mat-label>{{ prompts.ipAddress }}</mat-label>
-			<input formControlName="ip" matInput [placeholder]="prompts.ipAddress" name="ipAddress" id="ipAddress" type="text" [(ngModel)]="ipAddress" (ngModelChange)="validateIP()" required/>
+			<input formControlName="ip" matInput [placeholder]="prompts.ipAddress" name="ipAddress" id="ipAddress" type="text" [(ngModel)]="location.ipAddress" required/>
 			<mat-error *ngIf="editForm.hasError('pattern', 'ip')" id="incorrect-format">IP Address must be in 123.456.789.012 format.</mat-error>
 			<mat-error *ngIf="editForm.hasError('required', 'ip')">An IP Address is required for every location</mat-error>
 		</mat-form-field>
@@ -31,7 +31,7 @@
 		<mat-form-field class="input-pair" appearance="outline"  floatLabel="auto" >
 			<mat-label>{{ prompts.locationPrinters }}</mat-label>
 			<mat-hint>Use ctrl or shift to select multiple printers</mat-hint>
-			<select matNativeControl name="locationPrinters" multiple id="location-printers" [(ngModel)]="newPrinters">
+			<select matNativeControl name="locationPrinters" multiple id="location-printers" [(ngModel)]="newPrinters" formControlName="printers">
 				<option *ngFor="let printer of pds.data" [id]="printer._id" class="printer" [value]="printer._id">{{ printer.displayName }}</option>
 			</select>
 		</mat-form-field>
