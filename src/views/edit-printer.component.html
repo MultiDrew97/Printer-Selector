@@ -1,4 +1,3 @@
-
 <h1>Edit Printer</h1>
 
 <header id="edit-header">
@@ -6,33 +5,35 @@
 
 	<button mat-button (click)="delete()" id="remove-printer">{{ buttons.delete }}</button>
 </header>
+
 <hr />
-<mat-dialog-content id="content">
-	<form id="edit-form" class="dialog-form" (submit)="finished()" (change)="validate()">
-		<fieldset class="input-pair">
-			<label for="printerID">{{ prompts.printerID }}</label>
-			<input name="printerID" id="printerID" type="text" readonly [ngModel]="printer._id" />
-		</fieldset>
 
-		<fieldset class="input-pair">
-			<label for="printerName">{{ prompts.printerName }}</label>
-			<input name="printerName" id="printerName" type="text" [(ngModel)]="printerName" (ngModelChange)="validate()"/>
-		</fieldset>
+<mat-dialog-content>
+	<form id="edit-form" class="dialog-form" (submit)="finished()" (change)="validate()" [formGroup]="editForm">
+		<mat-form-field class="input-pair" appearance="outline">
+			<mat-label>{{ prompts.printerID }}</mat-label>
+			<input matInput name="printerID" id="printerID" type="text" readonly [ngModel]="printer._id"  formControlName="id"/>
+		</mat-form-field>
 
-		<fieldset class="input-pair">
-			<label for="pathName">{{ prompts.pathName }}</label>
-			<input name="pathName" id="pathName" type="text" [(ngModel)]="pathName" (ngModelChange)="validate()"/>
-		</fieldset>
+		<mat-form-field class="input-pair" appearance="outline">
+			<mat-label>{{ prompts.printerName }}</mat-label>
+			<input matInput name="printerName" id="printerName" type="text" [(ngModel)]="printer.displayName"  formControlName="displayName"/>
+		</mat-form-field>
 
-		<fieldset class="input-pair">
-			<label for="locations">{{ prompts.locations }}</label>
-			<select name="location" id="locations" (change)="validate()" [(ngModel)]="locationID" required>
+		<mat-form-field class="input-pair" appearance="outline">
+			<mat-label>{{ prompts.pathName }}</mat-label>
+			<input matInput name="pathName" id="pathName" type="text" [(ngModel)]="printer.pathName"  formControlName="pathName"/>
+		</mat-form-field>
+
+		<mat-form-field class="input-pair" appearance="outline">
+			<mat-label>{{ prompts.locations }}</mat-label>
+			<select matNativeControl name="location" id="locations" (change)="validate()" [(ngModel)]="locationID" required formControlName="location">
 				<option *ngFor="let location of lds.data" [id]="location._id" class="location" [value]="location._id">{{ location.displayName }}</option>
 			</select>
-		</fieldset>
+		</mat-form-field>
 	</form>
 </mat-dialog-content>
 <mat-dialog-actions id="action-buttons">
 	<button mat-button class="action-button" (click)="close()">{{ buttons.close }}</button>
-	<button mat-button class="action-button" form="edit-printer" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
+	<button mat-button class="action-button" form="edit-form" type="submit" [disabled]="!valid">{{ buttons.finished }}</button>
 </mat-dialog-actions>

@@ -10,6 +10,6 @@ export class TutorialResolver implements Resolve<Promise<Tutorial[]>> {
 	constructor(readonly api: APIService){}
 
 	async resolve(): Promise<Tutorial[]> {
-		return await this.api.getTutorials().toPromise();
+		return await this.api.getTutorials();
 	}
 }

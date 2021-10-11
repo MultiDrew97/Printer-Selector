@@ -12,7 +12,7 @@ export class EmailDialogComponent {
 	valid: boolean = false;
 	changed = false;
 	emailForm = new FormGroup({
-		emailControl: new FormControl('', [Validators.required, Validators.pattern(email)])
+		emailControl: new FormControl('', [Validators.required, Validators.pattern(email), Validators.email])
 	})
 
 	constructor(private dialogRef: MatDialogRef<EmailDialogComponent>,
@@ -22,8 +22,9 @@ export class EmailDialogComponent {
 	verifyEmail() {
 		let pattern = this.emailForm.hasError('pattern', 'emailControl')
 		let required = this.emailForm.hasError('required', 'emailControl')
+		let email = this.emailForm.hasError('email', 'emailControl')
 
-		this.valid = !(pattern || required)
+		this.valid = !(pattern || required || email)
 	}
 
 	finished() {
