@@ -8,18 +8,16 @@ import {FAQ, Image} from "../../scripts/models";
 })
 export class FAQComponent {
 	@Input()
-	faqs: FAQ[] = [];
+	faqs!: FAQ[];
 
 	@Input()
-	base: string = '';
+	base!: string;
 
 	@Input()
-	imgs: Image[] = []
+	imgs!: Image[]
 
 	@Output()
 	toggleCollapse = new EventEmitter<EventTarget | null>()
-
-	toggled = false;
 
 	toggle(target: EventTarget | null) {
 		// TODO: Figure out how to collapse an already open collapsible without hindering operations

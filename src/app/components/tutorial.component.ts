@@ -8,13 +8,13 @@ import {Image, Tutorial} from "../../scripts/models";
 })
 export class TutorialComponent {
 	@Input()
-	tutorials: Tutorial[] = [];
+	tutorials!: Tutorial[];
 
 	@Input()
-	base: string = '';
+	base!: string;
 
 	@Input()
-	imgs: Image[] = []
+	imgs!: Image[];
 
 	@Output()
 	toggleCollapse = new EventEmitter<EventTarget | null>()

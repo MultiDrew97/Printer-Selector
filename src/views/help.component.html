@@ -5,25 +5,28 @@
 	</div>
 
 	<nav id="table-contents">
+		<mat-card>
+
+		</mat-card>
 		<h3><a href="{{base}}#tutorials">All Tutorials</a></h3>
 		<ul>
-			<li *ngFor="let tutorial of tutorials"><a href="{{base}}#{{tutorial.linkID}}">{{ tutorial.title }}</a></li>
+			<li *ngFor="let tutorial of route.snapshot.data.tutorials"><a href="{{base}}#{{tutorial.linkID}}">{{ tutorial.title }}</a></li>
 		</ul>
 
 		<h3><a href="{{base}}#faqs">FAQs</a></h3>
 		<ul>
-			<li *ngFor="let faq of faqs"><a href="{{base}}#{{faq.linkID}}">{{ faq.question }}</a></li>
+			<li *ngFor="let faq of route.snapshot.data.faqs"><a href="{{base}}#{{faq.linkID}}">{{ faq.question }}</a></li>
 		</ul>
 	</nav>
 
 	<div id="tutorials" class="help-container">
 		<h1>Tutorials</h1>
-		<tutorials [tutorials]="tutorials" [base]="base" (toggleCollapse)="toggle($event)"></tutorials>
+		<tutorials [tutorials]="route.snapshot.data.tutorials" [base]="base" (toggleCollapse)="toggle($event)"></tutorials>
 	</div>
 
 	<div id="faqs" class="help-container">
 		<h1>FAQs</h1>
-		<faqs [faqs]="faqs" [base]="base" (toggleCollapse)="toggle($event)"></faqs>
+		<faqs [faqs]="route.snapshot.data.faqs" [base]="base" (toggleCollapse)="toggle($event)"></faqs>
 	</div>
 
 	<div id="images">

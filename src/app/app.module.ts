@@ -39,6 +39,7 @@ import {AddLocationDialogComponent} from "./dialogs/add-location-dialog.componen
 import {EditLocationDialogComponent} from "./dialogs/edit-location-dialog.component";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
 	declarations: [
@@ -80,7 +81,8 @@ import {MatIconModule} from "@angular/material/icon";
 		MatTabsModule,
 		MatInputModule,
 		ReactiveFormsModule,
-		MatIconModule
+		MatIconModule,
+		MatCardModule
 	],
 	providers: [
 		APIService,

@@ -28,7 +28,7 @@ export class GetPrintersComponent implements OnInit {
 
 	ngOnInit(): void {
 		// TODO: Use this to get the IP Address of the computer and use for auto selecting locations
-		/*checkIPAddress(apiKey).then(ip => {
+		/*checkIPAddress(this.apiKey).then(ip => {
 			this.determineTab(ip);
 		})*/
 
